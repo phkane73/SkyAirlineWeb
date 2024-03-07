@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.bg-img {
+  background-image: url(../../public/Assets/images/flights-register.jpeg);
+  background-size: 700px 700px;
+  background-position-y: center;
+}
+
+.min-h-screen {
+  background-color: #5078f2;
+  background-image: linear-gradient(315deg, #5078f2 0%, #efe9f4 74%);
+}
+
+.carousel {
+  height: 590px;
+}

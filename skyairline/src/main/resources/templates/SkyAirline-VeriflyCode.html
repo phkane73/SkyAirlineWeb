@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+</head>
+<body>
+    <div style="text-align: center">
+        <img src="https://phunugioi.com/wp-content/uploads/2020/10/hinh-anh-may-bay-dep.jpg" width="700px" height="300px">
+        <h1>Xin chào <span th:text="${name}"></span> đến với hãng hàng không SkyAirline của chúng tôi</h1>
+        <p style="font-size: 20px;">Mã xác thực email của bạn là <span th:text="${veriflycode}" style="font-size: 40px; font-weight: bold;"></span></p>
+    </div>
+</body>
+</html>
