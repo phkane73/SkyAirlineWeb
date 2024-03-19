@@ -6,6 +6,7 @@ import Home from "../Pages/Home";
 import BookingLayout from "../Layouts/BookingLayout";
 import ChooseFlight from "../Pages/ChooseFlight";
 import ValidInformation from "../Pages/ValidInformation";
+import ChooseSeat from "../Pages/ChooseSeat";
 
 const routes = [
   { path: "/", page: Home, layout: DefaultLayout },
@@ -17,8 +18,13 @@ const routes = [
     layout: BookingLayout,
   },
   {
-    path: "/booking/validinformation/:id/:class",
+    path: "/booking/validinformation/:id/:idClass",
     page: ValidInformation,
+    layout: BookingLayout,
+  },
+  {
+    path: "/booking/chooseseat",
+    page: ChooseSeat,
     layout: BookingLayout,
   },
 ];

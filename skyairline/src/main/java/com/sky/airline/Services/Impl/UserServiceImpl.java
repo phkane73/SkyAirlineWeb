@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     @KafkaListener(topics = "emailTopic", groupId = "emailG")
     public Boolean registerVeriflyEmail(User user) throws MessagingException {
         iSendMailService.sendEmail(user);
+        System.out.println(user.getEmail());
         return true;
     }
 
@@ -84,6 +85,11 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     @Override
     public User getUserByEmail(String email) {
         return iuserRepository.findByEmail(email);
+    }
+
+    @Override
+    public void saveUser(User user) {
+        iuserRepository.save(user);
     }
 }
 

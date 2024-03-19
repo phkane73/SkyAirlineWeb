@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +27,7 @@ public class User implements Serializable {
     private String email;
     @NotBlank(message = "Vui lòng nhập password")
     private String password;
+    private LocalDate birthday;
     @Pattern(regexp = "(^$|[0-9]{10})", message = "Số điện thoại không hợp lệ")
     private String phone;
 }

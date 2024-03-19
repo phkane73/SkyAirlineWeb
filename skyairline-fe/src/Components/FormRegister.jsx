@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import { register, veriflyCode } from "../Services/UserServices";
+import { register, verifyCode } from "../Services/UserServices";
 
 const style = {
   position: "absolute",
@@ -25,7 +25,7 @@ const FormRegister = () => {
     password: "",
     cfmpassword: "",
     phoneNumber: "",
-    veriflyCode: "",
+    verifyCode: "",
   });
 
   const [open, setOpen] = React.useState(false);
@@ -42,7 +42,7 @@ const FormRegister = () => {
   };
 
   const handleVeriflyCode = async () => {
-    const data = await veriflyCode(formData.email, formData.veriflyCode);
+    const data = await verifyCode(formData.email, formData.verifyCode);
     if (data) {
       alert("Bạn đã đăng ký thành công");
     }
@@ -273,11 +273,11 @@ const FormRegister = () => {
             </h1>
             <TextField
               required
-              id="veriflyCode"
-              name="veriflyCode"
+              id="verifyCode"
+              name="verifyCode"
               label="Mã xác thực"
               variant="filled"
-              value={formData.veriflyCode}
+              value={formData.verifyCode}
               sx={{ width: "100%" }}
               onChange={handleInputChange}
             />

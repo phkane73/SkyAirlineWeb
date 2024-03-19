@@ -30,7 +30,7 @@ public class FlightScheduleController {
     @PostMapping("/create")
     public ResponseEntity<?> createFlightSchedule(@RequestBody CreateScheduleRQ createScheduleRQ) {
         List<FlightTime> flightTimeList = flightTimeService.allFlightTimeList();
-        List<FlightSchedule> flightScheduleList =flightScheduleService.handleFlightSchedule(flightTimeList, createScheduleRQ.getStartDate(),
+        List<FlightSchedule> flightScheduleList = flightScheduleService.handleFlightSchedule(flightTimeList, createScheduleRQ.getStartDate(),
                 createScheduleRQ.getEndDate(), createScheduleRQ.getAction());
         return new ResponseEntity<>(flightScheduleList, HttpStatus.OK);
     }
@@ -44,6 +44,11 @@ public class FlightScheduleController {
     public ResponseEntity<?> findAllFlight(@RequestParam("departure") int departureId,
                                            @RequestParam("arrival") int arrivalId,
                                            @RequestParam("date") String date) {
-        return new ResponseEntity<>(flightScheduleService.findFlightSchedule(departureId,arrivalId,date), HttpStatus.OK);
+        return new ResponseEntity<>(flightScheduleService.findFlightSchedule(departureId, arrivalId, date), HttpStatus.OK);
+    }
+
+    @GetMapping("/flight")
+    public ResponseEntity<?> findAllFlight(@RequestParam("id") long id) {
+        return new ResponseEntity<>(flightScheduleService.getFlightById(id), HttpStatus.OK);
     }
 }

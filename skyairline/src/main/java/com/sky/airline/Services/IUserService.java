@@ -18,4 +18,6 @@ public interface IUserService {
     String login(AuthRequest authRequest);
 
     User getUserByEmail(String email);
+
+    void saveUser(User user);
 }

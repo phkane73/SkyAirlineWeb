@@ -25,8 +25,6 @@ public class UserController {
 
     private final IUserService iUserService;
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     private final ProducerService producerService;
 
     @PostMapping("/register")
@@ -41,25 +39,23 @@ public class UserController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @PostMapping("/veriflycode")
+    @PostMapping("/verifycode")
     public ResponseEntity<?> veriflycode(@RequestBody Map<String, Object> request) {
         return new ResponseEntity<>(iUserService.registerVeriflyCode(request.get("email").toString(),
-                request.get("codeverifly").toString()), HttpStatus.OK);
-    }
-
-    @GetMapping("/veriflycode2")
-    public ResponseEntity<?> veriflycode2(@RequestParam("email") String email) {
-        return new ResponseEntity<>(redisTemplate.opsForValue().get(email), HttpStatus.OK);
+                request.get("codeverify").toString()), HttpStatus.OK);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody AuthRequest authRequest) {
         String token = iUserService.login(authRequest);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        if (token != null) {
+            return new ResponseEntity<>(token, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false, HttpStatus.OK);
     }
 
     @PostMapping("/info")
-    public ResponseEntity<?> getUser(@RequestBody Map<String,Object> request) {
+    public ResponseEntity<?> getUser(@RequestBody Map<String, Object> request) {
         String email = new JwtTokenProvider().getUserIdFromJWT(request.get("token").toString());
         User user = iUserService.getUserByEmail(email);
         UserDTO userDTO = new UserDTO();
@@ -67,6 +63,17 @@ public class UserController {
         userDTO.setUsername(user.getUsername());
         userDTO.setPhone(user.getPhone());
         userDTO.setEmail(user.getEmail());
-        return new ResponseEntity<>(userDTO,HttpStatus.OK);
+        userDTO.setBirthday(user.getBirthday());
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<?> confirmInformation(@RequestBody User user) {
+        User userOld = iUserService.getUserByEmail(user.getEmail());
+        userOld.setPhone(user.getPhone());
+        userOld.setUsername(user.getUsername());
+        userOld.setBirthday(user.getBirthday());
+        iUserService.saveUser(userOld);
+        return new ResponseEntity<>(true,HttpStatus.OK);
     }
 }

@@ -2,40 +2,42 @@ package com.sky.airline.Config;
 
 import com.sky.airline.Services.Impl.CustomUserDetails;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
-    private final String JWT_SECRET = "0857487577hoangdsadasdqrwqfasfasffsafasfasfadsad";
-    private final long JWT_EXPIRATION = 604800000L;
-
     public String generateToken(CustomUserDetails userDetails) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
+        return Jwts
+                .builder()
+                .claim("sub", userDetails.getUsername())
+                .claim("iat", new Date(System.currentTimeMillis()))
+                .claim("exp", new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3))
+                .signWith(getSignInKey())
                 .compact();
     }
 
     public String getUserIdFromJWT(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(JWT_SECRET).build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = Jwts
+                .parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
         return claims.getSubject();
     }
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(JWT_SECRET).build().parseClaimsJws(authToken);
+            Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(authToken);
             return true;
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");
@@ -47,5 +49,11 @@ public class JwtTokenProvider {
             log.error(" JWT claims string is empty.");
         }
         return false;
+    }
+
+    private SecretKey getSignInKey() {
+        String JWT_SECRET = "0857487577hoangdsadasdqrwqfasfasffsafasfasfadsad";
+        byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

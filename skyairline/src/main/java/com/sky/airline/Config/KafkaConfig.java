@@ -10,10 +10,16 @@ import org.springframework.kafka.config.TopicBuilder;
 @EnableKafka
 public class KafkaConfig {
     @Bean
-    public NewTopic seatTopic(){
+    public NewTopic emailTopic(){
         return TopicBuilder
                 .name("emailTopic")
                 .build();
     }
 
+    @Bean
+    public NewTopic seatTopic(){
+        return TopicBuilder
+                .name("seatTopic")
+                .build();
+    }
 }

@@ -35,4 +35,6 @@ public interface IFlightScheduleService {
 
     void createSeatWithFlightSchedule(long idSchedule);
 
+    FlightSchedule getFlightById(long id);
+
 }

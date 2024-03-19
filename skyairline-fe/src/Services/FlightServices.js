@@ -10,3 +10,25 @@ export const findFlight = async (departure, arrival, date) => {
     console.error("Error fetching data:", error);
   }
 };
+
+export const getFlight = async (id) => {
+  try {
+    const response = await API.get("/api/public/flightschedule/flight", {
+      params: { id: id },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+export const getClass = async (id) => {
+  try {
+    const response = await API.get("/api/public/class/getclass", {
+      params: { id: id },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};

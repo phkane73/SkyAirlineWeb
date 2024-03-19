@@ -14,7 +14,6 @@ import {
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import { findFlight } from "../Services/FlightServices";
-
 const Home = () => {
   const [listAirportDeparture, setListAirportDeparture] = useState([]);
   const [listAirportArrival, setListAirportArrival] = useState([]);
@@ -23,7 +22,6 @@ const Home = () => {
   const [date, setDate] = useState(null);
   const [message, setMessage] = useState("");
   const Navigate = useNavigate();
-
   useEffect(() => {
     async function fetchData() {
       const data = await getAllAirportOperation();
@@ -75,6 +73,9 @@ const Home = () => {
       if (datas.length === 0) {
         alert("Không có chuyến bay nào phù hợp!");
       } else {
+        // if (store.ticket) {
+        //   dispatch(cancelSession());
+        // }
         Navigate(
           `/booking/chooseflight/${departure.id}/${arrival.id}/${dayjs(
             date

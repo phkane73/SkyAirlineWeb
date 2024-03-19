@@ -141,9 +141,13 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
             seatDetail.setStatus("AVAILABLE");
             seatDetail.setId(flightSeatKey);
             seatDetail.setSeat(seats.get(i));
-            System.out.println(seats.get(i));
             seatDetailRepository.save(seatDetail);
         }
+    }
+
+    @Override
+    public FlightSchedule getFlightById(long id) {
+        return flightScheduleRepository.findById(id).get();
     }
 
 

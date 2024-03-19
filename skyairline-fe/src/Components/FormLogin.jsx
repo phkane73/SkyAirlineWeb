@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../Services/UserServices";
+import { setToken } from "../Redux/reducers/AuthReducer";
+import { useDispatch } from "react-redux";
 const FormLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    error: "",
   });
 
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -39,13 +43,13 @@ const FormLogin = () => {
       setErrors(newErrors);
     } else {
       const data = await login(formData.email, formData.password);
-      localStorage.setItem(data.id, data);
-      if (data === null) {
-        newErrors.password = "Sai tài khoản hoặc mật khẩu!";
+      if (data === false) {
+        newErrors.error = "Sai tài khoản hoặc mật khẩu!";
         setErrors(newErrors);
+      } else {
+        dispatch(setToken(data));
+        navigate(-1);
       }
-      console.log(data);
-      setErrors({});
     }
   };
   return (
@@ -111,13 +115,13 @@ const FormLogin = () => {
                     </p>
                   )}
                 </label>
-
+                <p className="text-red-500 text-xs absolute">{errors.error}</p>
                 <button
                   className="mt-5 text-white font-semibold py-2 px-10 bg-blue-700 border rounded
                 hover:bg-[#C6AB00] hover:text-white transition-all float-start"
                   type="submit"
                 >
-                  Đăng ký
+                  Đăng nhập
                 </button>
               </form>
               <div className="mt-5 cursor-default float-end">
