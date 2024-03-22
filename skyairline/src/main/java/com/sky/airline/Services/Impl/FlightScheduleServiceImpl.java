@@ -4,6 +4,7 @@ import com.sky.airline.Dto.AirportDTO;
 import com.sky.airline.Dto.FlightScheduleDTO;
 import com.sky.airline.Dto.PlaneDTO;
 import com.sky.airline.Entities.*;
+import com.sky.airline.Enums.SeatStatus;
 import com.sky.airline.Repositories.IFlightScheduleRepository;
 import com.sky.airline.Repositories.ISeatDetailRepository;
 import com.sky.airline.Repositories.ISeatRepository;
@@ -138,7 +139,7 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         for (int i=0; i<count; i++){
             SeatDetail seatDetail = new SeatDetail();
             FlightSeatKey flightSeatKey = new FlightSeatKey(seats.get(i).getId(),idSchedule);
-            seatDetail.setStatus("AVAILABLE");
+            seatDetail.setStatus(SeatStatus.AVAILABLE);
             seatDetail.setId(flightSeatKey);
             seatDetail.setSeat(seats.get(i));
             seatDetailRepository.save(seatDetail);

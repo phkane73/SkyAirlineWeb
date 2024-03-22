@@ -7,7 +7,7 @@ import BookingLayout from "../Layouts/BookingLayout";
 import ChooseFlight from "../Pages/ChooseFlight";
 import ValidInformation from "../Pages/ValidInformation";
 import ChooseSeat from "../Pages/ChooseSeat";
-
+import Payment from "../Pages/Payment";
 const routes = [
   { path: "/", page: Home, layout: DefaultLayout },
   { path: "/login", page: Login, layout: LayoutAuth },
@@ -25,6 +25,11 @@ const routes = [
   {
     path: "/booking/chooseseat",
     page: ChooseSeat,
+    layout: BookingLayout,
+  },
+  {
+    path: "/booking/payment",
+    page: Payment,
     layout: BookingLayout,
   },
 ];

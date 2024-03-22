@@ -19,14 +19,14 @@ public class SeatController {
     @PutMapping("/booking")
     public ResponseEntity<?> bookingSeat(@RequestBody Map<String, Object> request){
         seatService.bookingSeat(Integer.parseInt(request.get("idSeat").toString()),
-                Long.parseLong(request.get("idSchedule").toString()));
+                Long.parseLong(request.get("idSchedule").toString()),request.get("token").toString());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/cancel")
     public ResponseEntity<?> cancelSeat(@RequestBody Map<String, Object> request){
         seatService.cancelSeat(Integer.parseInt(request.get("idSeat").toString()),
-                Long.parseLong(request.get("idSchedule").toString()));
+                Long.parseLong(request.get("idSchedule").toString()), request.get("token").toString());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,10 +1,14 @@
 package com.sky.airline.Services.Impl;
 
+import com.sky.airline.Config.JwtTokenProvider;
 import com.sky.airline.Entities.FlightSchedule;
 import com.sky.airline.Entities.SeatDetail;
+import com.sky.airline.Entities.User;
+import com.sky.airline.Enums.SeatStatus;
 import com.sky.airline.Repositories.ISeatDetailRepository;
 import com.sky.airline.Services.IFlightScheduleService;
 import com.sky.airline.Services.ISeatService;
+import com.sky.airline.Services.IUserService;
 import com.sky.airline.Services.KafkaService.ProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -25,13 +29,18 @@ public class SeatServiceImpl implements ISeatService {
 
     private final ProducerService producerService;
 
+    private final IUserService iUserService;
+
     @Override
-    public void bookingSeat(int idSeat, long idSchedule) {
+    public void bookingSeat(int idSeat, long idSchedule, String token) {
+        String email = new JwtTokenProvider().getUserIdFromJWT(token);
+        User user = iUserService.getUserByEmail(email);
         FlightSchedule flightSchedule = flightScheduleService.getFlightById(idSchedule);
         Set<SeatDetail> SeatDetails = flightSchedule.getSeatDetails();
         for (SeatDetail s : SeatDetails) {
             if (s.getId().getSeat_id() == idSeat) {
-                s.setStatus("BOOKING");
+                s.setUserBookingSeat(user.getId());
+                s.setStatus(SeatStatus.BOOKING);
                 seatDetailRepository.save(s);
             }
         }
@@ -39,12 +48,16 @@ public class SeatServiceImpl implements ISeatService {
     }
 
     @Override
-    public void cancelSeat(int idSeat, long idSchedule) {
+    public void cancelSeat(int idSeat, long idSchedule, String token) {
+        String email = new JwtTokenProvider().getUserIdFromJWT(token);
+        User user = iUserService.getUserByEmail(email);
         FlightSchedule flightSchedule = flightScheduleService.getFlightById(idSchedule);
         Set<SeatDetail> SeatDetails = flightSchedule.getSeatDetails();
         for (SeatDetail s : SeatDetails) {
-            if (s.getId().getSeat_id() == idSeat) {
-                s.setStatus("AVAILABLE");
+            if ((s.getId().getSeat_id() == idSeat) &&
+                    (user.getId() == s.getUserBookingSeat())) {
+                s.setUserBookingSeat(0);
+                s.setStatus(SeatStatus.AVAILABLE);
                 seatDetailRepository.save(s);
             }
         }

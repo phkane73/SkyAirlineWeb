@@ -2,13 +2,18 @@ import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import ListItemText from "@mui/material/ListItemText";
 import Seat from "../Components/Seat";
 import Menu from "@mui/material/Menu";
-import { setTotalPrice, setFlight } from "../Redux/reducers/SessionReducer";
+import { setFlight } from "../Redux/reducers/SessionReducer";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import {
+  createPaymentPaypal,
+  capturePaymentPaypal,
+} from "../Services/PaymentServices";
 
 const ChooseSeat = ({ onChangeStep }) => {
   onChangeStep(2);
@@ -24,6 +29,12 @@ const ChooseSeat = ({ onChangeStep }) => {
   const [seats, setSeats] = useState([]);
   const [rows, setRows] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const initialOptions = {
+    clientId:
+      "AVb4L9dRkYo_DCNxUPkyi38KPZuJW90TpzYthv6QIxhOBMJMns0rrfk3pWNSZAvPGm6LcVhXfsMJEM4l",
+    currency: "USD",
+    intent: "capture",
+  };
   const open = Boolean(anchorEl);
   const handleDown = (event) => {
     setAnchorEl(event.currentTarget);
@@ -33,12 +44,13 @@ const ChooseSeat = ({ onChangeStep }) => {
   };
 
   const store = useSelector((state) => state.Session);
+  const tk = useSelector((state) => state.Auth.token);
   useEffect(() => {
     setF(store.flight);
     setTClass(store.ticketClass);
     setPrice(store.totalPrice);
     setSeats(store.flight.seatDetails);
-  }, [store, seats]);
+  }, [store, seats, tk]);
 
   useEffect(() => {
     const seatsCopy = [...seats];
@@ -65,6 +77,26 @@ const ChooseSeat = ({ onChangeStep }) => {
     connectAndSubscribe();
   }, [dispatch]);
 
+  const createOrder = async () => {
+    try {
+      const response = await createPaymentPaypal(price);
+      if (response !== null) return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onApprove = async (data) => {
+    try {
+      const response = await capturePaymentPaypal(data.orderID);
+      if (response.data !== null) {
+        console.log("Success");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <div className="container my-5">
@@ -89,26 +121,31 @@ const ChooseSeat = ({ onChangeStep }) => {
               <ul className="flex justify-between gap-10">
                 <li className="flex flex-col items-center">
                   <div className="businessSeat p-3 w-[15px] bg-red-500 rounded"></div>
-                  <span>Ghế Business</span>
+                  <span>Business</span>
                   <span>A (1--12)</span>
                 </li>
                 <li className="flex flex-col items-center">
                   <div className="deluxeSeat p-3 w-[15px] bg-yellow-500 rounded"></div>
-                  <span>Ghế Deluxe</span>
+                  <span>Deluxe</span>
                   <span>B (1--18)</span>
                 </li>
                 <li className="flex flex-col items-center">
                   <div className="basicSeat p-3 w-[15px] bg-green-500 rounded"></div>
-                  <span>Ghế Classic</span>
+                  <span>Classic</span>
                   <span>A (1--30)</span>
                 </li>
                 <li className="flex flex-col items-center">
-                  <div className="seating p-3 w-[15px] bg-blue-500 rounded"></div>
-                  <span>Ghế đang chọn</span>
+                  <div className="seating p-3 w-[15px] bg-purple-800 rounded"></div>
+                  <span>Đang chọn</span>
+                </li>
+                <li className="flex flex-col items-center">
+                  <div className="seating p-3 w-[15px] bg-blue-600 rounded"></div>
+                  <span>Có người</span>
+                  <span>đang chọn</span>
                 </li>
                 <li className="flex flex-col items-center">
                   <div className="seated p-3 w-[15px] bg-gray-500 rounded"></div>
-                  <span>Ghế đã đặt</span>
+                  <span>Đã đặt</span>
                 </li>
               </ul>
             </div>
@@ -138,6 +175,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                         class={seat.seat.ticketClass.className}
                                         id={seat.id.seat_id}
                                         idSchedule={seat.id.flight_schedule_id}
+                                        idUser={seat.userBookingSeat}
+                                        code={seat.seat.seatCode}
                                       ></Seat>
                                       <span className="text-sm">
                                         {seat.seat.seatCode}
@@ -155,6 +194,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                         class={seat.seat.ticketClass.className}
                                         id={seat.id.seat_id}
                                         idSchedule={seat.id.flight_schedule_id}
+                                        idUser={seat.userBookingSeat}
+                                        code={seat.seat.seatCode}
                                       ></Seat>
                                       <span className="text-sm">
                                         {seat.seat.seatCode}
@@ -180,6 +221,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                         class={seat.seat.ticketClass.className}
                                         id={seat.id.seat_id}
                                         idSchedule={seat.id.flight_schedule_id}
+                                        idUser={seat.userBookingSeat}
+                                        code={seat.seat.seatCode}
                                       ></Seat>
                                       <span className="text-sm">
                                         {seat.seat.seatCode}
@@ -197,6 +240,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                         class={seat.seat.ticketClass.className}
                                         id={seat.id.seat_id}
                                         idSchedule={seat.id.flight_schedule_id}
+                                        idUser={seat.userBookingSeat}
+                                        code={seat.seat.seatCode}
                                       ></Seat>
                                       <span className="text-sm">
                                         {seat.seat.seatCode}
@@ -320,6 +365,20 @@ const ChooseSeat = ({ onChangeStep }) => {
                     {new Intl.NumberFormat().format(price).replaceAll(",", ",")}
                     VND
                   </h1>
+                </div>
+                <div>
+                  <Link
+                    to="/booking/payment"
+                    className="bg-yellow-500 hover:bg-yellow-500/70 text-white font-bold py-3 px-4  transition-all flex justify-center pl-1 mt-2 uppercase text-xl rounded-lg"
+                  >
+                    <span>Thanh toán</span>
+                  </Link>
+                  {/* <PayPalScriptProvider options={initialOptions}>
+                    <PayPalButtons
+                      onApprove={onApprove}
+                      createOrder={createOrder}
+                    />
+                  </PayPalScriptProvider> */}
                 </div>
               </div>
             </div>

@@ -1,46 +1,111 @@
+import { useDispatch, useSelector } from "react-redux";
 import { bookingSeat, cancelSeat } from "../Services/SeatServices";
-
+import { getInfo } from "../Services/UserServices";
+import { useEffect, useState } from "react";
+import { setSeatCode, removeSeatCode } from "../Redux/reducers/SessionReducer";
 function Seat(props) {
+  const token = useSelector((state) => state.Auth.token);
+  const seatCode = useSelector((state) => state.Session.seatCode);
+  const ticketClass = useSelector((state) => state.Session.ticketClass);
+  const [idUser, setIdUser] = useState(0);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    async function fetchData() {
+      const id = await getInfo(token);
+      setIdUser(id.id);
+    }
+    fetchData();
+  }, [token]);
   let seat;
   switch (props.status) {
     case "BOOKING":
-      seat = (
-        <img
-          className="w-[35px]"
-          src="/Assets/images/seat/bookingDisplayOther.svg"
-          alt=""
-        />
-      );
+      if (props.idUser === idUser) {
+        seat = (
+          <img
+            className="w-[35px]"
+            src="/Assets/images/seat/bookingDisplayUser.svg"
+            alt=""
+          />
+        );
+      } else {
+        if (ticketClass.className === props.class) {
+          seat = (
+            <img
+              className="w-[35px]"
+              src="/Assets/images/seat/bookingDisplayOther.svg"
+              alt=""
+            />
+          );
+        } else {
+          seat = (
+            <img
+              className="w-[35px]"
+              src="/Assets/images/seat/booked.svg"
+              alt=""
+            />
+          );
+        }
+      }
       break;
     case "AVAILABLE":
       if (props.class) {
         switch (props.class) {
           case "BUSINESS":
-            seat = (
-              <img
-                className="w-[35px]"
-                src="/Assets/images/seat/business.svg"
-                alt=""
-              />
-            );
+            if (ticketClass.className === "BUSINESS") {
+              seat = (
+                <img
+                  className="w-[35px]"
+                  src="/Assets/images/seat/business.svg"
+                  alt=""
+                />
+              );
+            } else {
+              seat = (
+                <img
+                  className="w-[35px]"
+                  src="/Assets/images/seat/booked.svg"
+                  alt=""
+                />
+              );
+            }
             break;
           case "DELUXE":
-            seat = (
-              <img
-                className="w-[35px]"
-                src="/Assets/images/seat/deluxe.svg"
-                alt=""
-              />
-            );
+            if (ticketClass.className === "DELUXE") {
+              seat = (
+                <img
+                  className="w-[35px]"
+                  src="/Assets/images/seat/deluxe.svg"
+                  alt=""
+                />
+              );
+            } else {
+              seat = (
+                <img
+                  className="w-[35px]"
+                  src="/Assets/images/seat/booked.svg"
+                  alt=""
+                />
+              );
+            }
             break;
           case "CLASSIC":
-            seat = (
-              <img
-                className="w-[35px]"
-                src="/Assets/images/seat/classic.svg"
-                alt=""
-              />
-            );
+            if (ticketClass.className === "CLASSIC") {
+              seat = (
+                <img
+                  className="w-[35px]"
+                  src="/Assets/images/seat/classic.svg"
+                  alt=""
+                />
+              );
+            } else {
+              seat = (
+                <img
+                  className="w-[35px]"
+                  src="/Assets/images/seat/booked.svg"
+                  alt=""
+                />
+              );
+            }
             break;
           default:
             seat = (
@@ -63,10 +128,19 @@ function Seat(props) {
       );
   }
   const SeatBooked = function () {
-    if (props.status === "AVAILABLE") {
-      bookingSeat(props.id, props.idSchedule);
-    } else {
-      cancelSeat(props.id, props.idSchedule);
+    if (props.status === "AVAILABLE" && ticketClass.className === props.class) {
+      if (seatCode === "") {
+        console.log(2);
+        bookingSeat(props.id, props.idSchedule, token);
+        dispatch(setSeatCode(props.code));
+      } else {
+        alert("Bạn chỉ có thể đặt 1 ghế!");
+      }
+    }
+    if (props.status === "BOOKING" && ticketClass.className === props.class) {
+      console.log(1);
+      cancelSeat(props.id, props.idSchedule, token);
+      dispatch(removeSeatCode());
     }
   };
   return (

@@ -5,6 +5,7 @@ const initialState = {
   flight: {},
   ticketClass: {},
   totalPrice: 0,
+  seatCode: "",
 };
 
 const flights = createSlice({
@@ -23,11 +24,18 @@ const flights = createSlice({
     setTotalPrice: (state, action) => {
       state.totalPrice = action.payload;
     },
+    setSeatCode: (state, action) => {
+      state.seatCode = action.payload;
+    },
+    removeSeatCode: (state) => {
+      state.seatCode = "";
+    },
     removeSession: (state) => {
       state.flights = [];
       state.flight = {};
       state.ticketClass = {};
       state.totalPrice = 0;
+      state.seatCode = "";
     },
   },
 });
@@ -37,6 +45,8 @@ export const {
   setTicketClass,
   setTotalPrice,
   setFlight,
+  setSeatCode,
+  removeSeatCode,
   removeSession,
 } = flights.actions;
 
