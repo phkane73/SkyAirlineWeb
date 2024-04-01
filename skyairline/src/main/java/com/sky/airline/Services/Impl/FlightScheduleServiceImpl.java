@@ -129,6 +129,11 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         Airport arrivalAirport = airportService.findAirportById(arrival);
         LocalDateTime start = converToLocalDataTime(date);
         LocalDateTime end = calculateDate(start, 23F);
+        //Chưa xử lí hết ghế
+//        List<FlightSchedule> flightScheduleList = flightScheduleRepository.findAllByDepartureAirportAndArrivalAirportAndDepartureTimeBetween(departureAirport, arrivalAirport, start, end);
+//        for(FlightSchedule flightSchedule: flightScheduleList){
+//            flightSchedule.getSeatDetails().stream().filter()
+//        }
         return flightScheduleRepository.findAllByDepartureAirportAndArrivalAirportAndDepartureTimeBetween(departureAirport, arrivalAirport, start, end);
     }
 

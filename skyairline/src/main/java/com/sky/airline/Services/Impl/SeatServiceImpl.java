@@ -1,11 +1,10 @@
 package com.sky.airline.Services.Impl;
 
 import com.sky.airline.Config.JwtTokenProvider;
-import com.sky.airline.Entities.FlightSchedule;
-import com.sky.airline.Entities.SeatDetail;
-import com.sky.airline.Entities.User;
+import com.sky.airline.Entities.*;
 import com.sky.airline.Enums.SeatStatus;
 import com.sky.airline.Repositories.ISeatDetailRepository;
+import com.sky.airline.Repositories.ISeatRepository;
 import com.sky.airline.Services.IFlightScheduleService;
 import com.sky.airline.Services.ISeatService;
 import com.sky.airline.Services.IUserService;
@@ -31,6 +30,8 @@ public class SeatServiceImpl implements ISeatService {
 
     private final IUserService iUserService;
 
+    private final ISeatRepository seatRepository;
+
     @Override
     public void bookingSeat(int idSeat, long idSchedule, String token) {
         String email = new JwtTokenProvider().getUserIdFromJWT(token);
@@ -55,13 +56,34 @@ public class SeatServiceImpl implements ISeatService {
         Set<SeatDetail> SeatDetails = flightSchedule.getSeatDetails();
         for (SeatDetail s : SeatDetails) {
             if ((s.getId().getSeat_id() == idSeat) &&
-                    (user.getId() == s.getUserBookingSeat())) {
+                    (user.getId() == s.getUserBookingSeat()) &&
+                    (s.getStatus() == SeatStatus.BOOKING)) {
                 s.setUserBookingSeat(0);
                 s.setStatus(SeatStatus.AVAILABLE);
                 seatDetailRepository.save(s);
             }
         }
         producerService.setFlightSchedule(flightSchedule);
+    }
+
+    @Override
+    public Seat getSeatBySeatCode(String seatCode) {
+        return seatRepository.getSeatBySeatCode(seatCode);
+    }
+
+    @Override
+    public SeatDetail getSeatDetailById(FlightSeatKey flightSeatKey) {
+        return seatDetailRepository.getReferenceById(flightSeatKey);
+    }
+
+    @Override
+    public void saveSeatDetail(SeatDetail seatDetail) {
+        seatDetailRepository.save(seatDetail);
+    }
+
+    @Override
+    public Seat getSeatById(Integer seatId) {
+        return seatRepository.findById(seatId).get();
     }
 
     @Override

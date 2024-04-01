@@ -14,6 +14,8 @@ public interface IAirportService {
 
     List<Plane> listPlaneOnAirport(Airport airport);
 
+    void save(Airport airport);
+
     List<Airport> allAirport();
 
     Airport findAirportByAirportName(String airportName);

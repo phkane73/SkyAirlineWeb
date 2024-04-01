@@ -18,6 +18,7 @@ import java.util.Set;
 public class FlightSchedule implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "flight_id")
     private Long id;
     @ManyToOne
     @JoinColumn(name = "departure_airport", referencedColumnName = "airport_id")

@@ -7,12 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "seat_detail")
-public class SeatDetail {
+public class SeatDetail implements Serializable {
     @EmbeddedId
     private FlightSeatKey id;
     private SeatStatus status;

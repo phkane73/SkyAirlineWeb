@@ -174,6 +174,7 @@ export default function AirportManagement() {
                           name={airport.airportName}
                           location={airport.location}
                           load={render}
+                          onChildChange={handleChildChange}
                         />
                       </>
                     ) : (

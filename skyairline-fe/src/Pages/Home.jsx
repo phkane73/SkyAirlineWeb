@@ -14,6 +14,8 @@ import {
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import { findFlight } from "../Services/FlightServices";
+import { useDispatch, useSelector } from "react-redux";
+import { removeSession } from "../Redux/reducers/SessionReducer";
 const Home = () => {
   const [listAirportDeparture, setListAirportDeparture] = useState([]);
   const [listAirportArrival, setListAirportArrival] = useState([]);
@@ -22,14 +24,17 @@ const Home = () => {
   const [date, setDate] = useState(null);
   const [message, setMessage] = useState("");
   const Navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.Auth.token);
   useEffect(() => {
     async function fetchData() {
       const data = await getAllAirportOperation();
       setListAirportDeparture(data);
       setListAirportArrival(data);
+      dispatch(removeSession(token));
     }
     fetchData();
-  }, []);
+  }, [dispatch, token]);
 
   useEffect(() => {
     async function fetchData() {
@@ -73,9 +78,6 @@ const Home = () => {
       if (datas.length === 0) {
         alert("Không có chuyến bay nào phù hợp!");
       } else {
-        // if (store.ticket) {
-        //   dispatch(cancelSession());
-        // }
         Navigate(
           `/booking/chooseflight/${departure.id}/${arrival.id}/${dayjs(
             date

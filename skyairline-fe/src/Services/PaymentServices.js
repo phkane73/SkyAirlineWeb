@@ -11,12 +11,24 @@ export const createPaymentPaypal = async (total) => {
   }
 };
 
-export const capturePaymentPaypal = async (paymentId) => {
+export const capturePaymentPaypal = async (
+  paymentId,
+  method,
+  price,
+  seatId,
+  flightId,
+  userId
+) => {
   try {
     const response = await API.post("/api/public/payment/capture", {
       paymentId: paymentId,
+      method: method,
+      price: price,
+      seatId: seatId,
+      flightId: flightId,
+      userId: userId,
     });
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Error fetching data:", error);
   }

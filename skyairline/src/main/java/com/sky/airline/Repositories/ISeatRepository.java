@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ISeatRepository extends JpaRepository<Seat, Integer> {
+
+    Seat getSeatBySeatCode(String seatCode);
 }

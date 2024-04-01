@@ -48,7 +48,7 @@ const FormLogin = () => {
         setErrors(newErrors);
       } else {
         dispatch(setToken(data));
-        navigate(-1);
+        navigate("/");
       }
     }
   };

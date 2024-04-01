@@ -2,10 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { bookingSeat, cancelSeat } from "../Services/SeatServices";
 import { getInfo } from "../Services/UserServices";
 import { useEffect, useState } from "react";
-import { setSeatCode, removeSeatCode } from "../Redux/reducers/SessionReducer";
+import { setSeat, removeSeat } from "../Redux/reducers/SessionReducer";
 function Seat(props) {
   const token = useSelector((state) => state.Auth.token);
-  const seatCode = useSelector((state) => state.Session.seatCode);
+  const s = useSelector((state) => state.Session.seat);
   const ticketClass = useSelector((state) => state.Session.ticketClass);
   const [idUser, setIdUser] = useState(0);
   const dispatch = useDispatch();
@@ -18,6 +18,11 @@ function Seat(props) {
   }, [token]);
   let seat;
   switch (props.status) {
+    case "BOOKED":
+      seat = (
+        <img className="w-[35px]" src="/Assets/images/seat/booked.svg" alt="" />
+      );
+      break;
     case "BOOKING":
       if (props.idUser === idUser) {
         seat = (
@@ -118,29 +123,29 @@ function Seat(props) {
         }
       }
       break;
+
     default:
       seat = (
-        <img
-          className="w-[35px]"
-          src="/Assets/images/seat/classic.svg"
-          alt=""
-        />
+        <img className="w-[35px]" src="/Assets/images/seat/booked.svg" alt="" />
       );
   }
   const SeatBooked = function () {
     if (props.status === "AVAILABLE" && ticketClass.className === props.class) {
-      if (seatCode === "") {
-        console.log(2);
+      if (Object.keys(s).length === 0) {
         bookingSeat(props.id, props.idSchedule, token);
-        dispatch(setSeatCode(props.code));
+        dispatch(
+          setSeat({
+            seatCode: props.code,
+            seatId: props.id,
+          })
+        );
       } else {
         alert("Bạn chỉ có thể đặt 1 ghế!");
       }
     }
     if (props.status === "BOOKING" && ticketClass.className === props.class) {
-      console.log(1);
       cancelSeat(props.id, props.idSchedule, token);
-      dispatch(removeSeatCode());
+      dispatch(removeSeat(token));
     }
   };
   return (

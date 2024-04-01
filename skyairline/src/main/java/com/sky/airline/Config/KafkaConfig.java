@@ -33,6 +33,15 @@ public class KafkaConfig {
                 .partitions(2)
                 .build();
     }
+
+    @Bean
+    public NewTopic ticketTopic(){
+        return TopicBuilder
+                .name("ticketTopic")
+                .partitions(2)
+                .build();
+    }
+
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();

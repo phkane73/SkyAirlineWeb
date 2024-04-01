@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { cancelSeat } from "../../Services/SeatServices";
 
 const initialState = {
   flights: [],
   flight: {},
   ticketClass: {},
   totalPrice: 0,
-  seatCode: "",
+  seat: {},
 };
 
 const flights = createSlice({
@@ -24,18 +25,24 @@ const flights = createSlice({
     setTotalPrice: (state, action) => {
       state.totalPrice = action.payload;
     },
-    setSeatCode: (state, action) => {
-      state.seatCode = action.payload;
+    setSeat: (state, action) => {
+      state.seat = action.payload;
     },
-    removeSeatCode: (state) => {
-      state.seatCode = "";
+    removeSeat: (state, action) => {
+      if (state.seat.seatId && state.flight.id) {
+        cancelSeat(state.seat.seatId, state.flight.id, action.payload);
+      }
+      state.seat = {};
     },
-    removeSession: (state) => {
+    removeSession: (state, action) => {
+      if (state.seat.seatId && state.flight.id) {
+        cancelSeat(state.seat.seatId, state.flight.id, action.payload);
+      }
       state.flights = [];
       state.flight = {};
       state.ticketClass = {};
       state.totalPrice = 0;
-      state.seatCode = "";
+      state.seat = {};
     },
   },
 });
@@ -45,8 +52,8 @@ export const {
   setTicketClass,
   setTotalPrice,
   setFlight,
-  setSeatCode,
-  removeSeatCode,
+  setSeat,
+  removeSeat,
   removeSession,
 } = flights.actions;
 

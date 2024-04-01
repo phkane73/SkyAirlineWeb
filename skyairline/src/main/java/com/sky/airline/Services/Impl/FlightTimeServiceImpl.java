@@ -57,8 +57,24 @@ public class FlightTimeServiceImpl implements IFlightTimeService {
     }
 
     @Override
-    public void deleteFlightTime(int id) {
+    public boolean deleteFlightTime(int id) {
+        FlightTime flightTime = flightTimeRepository.findById(id).get();
+        Airport from = flightTime.getFrom();
+        Airport to = flightTime.getTo();
         flightTimeRepository.deleteById(id);
+        List<FlightTime> flightTimeListFrom = flightTimeRepository.getFlightTimeByFromOrTo(from, from);
+        if(flightTimeListFrom.isEmpty()){
+            from.setOperation(false);
+            airportService.save(from);
+            return true;
+        }
+        List<FlightTime> flightTimeListTo = flightTimeRepository.getFlightTimeByFromOrTo(to, to);
+        if(flightTimeListTo.isEmpty()){
+            to.setOperation(false);
+            airportService.save(to);
+            return true;
+        }
+        return false;
     }
 
 }

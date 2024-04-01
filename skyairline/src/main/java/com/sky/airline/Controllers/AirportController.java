@@ -55,7 +55,7 @@ public class AirportController {
     public ResponseEntity<?> getInfoAirports(@RequestParam("id") int id) {
         Airport airport = airportService.findAirportById(id);
         List<FlightTime> flightTimeList = flightTimeService.getFlightTimeByAirport(airport, airport);
-        if (flightTimeList.isEmpty()) {
+        if (flightTimeList==null) {
             return new ResponseEntity<>("Sân bay chưa có tuyến", HttpStatus.OK);
         }
         return new ResponseEntity<>(flightTimeList, HttpStatus.OK);
@@ -97,7 +97,6 @@ public class AirportController {
 
     @DeleteMapping("/deleteflighttime")
     public ResponseEntity<?>  deleteFlightTime(@RequestParam("id") int id) {
-        flightTimeService.deleteFlightTime(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(flightTimeService.deleteFlightTime(id),HttpStatus.OK);
     }
 }

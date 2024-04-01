@@ -1,6 +1,8 @@
 package com.sky.airline.Services.Impl;
 
+import com.sky.airline.Entities.Ticket;
 import com.sky.airline.Entities.User;
+import com.sky.airline.Repositories.IUserRepository;
 import com.sky.airline.Services.ISendMailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -16,6 +18,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +34,10 @@ public class SendMailServiceImpl implements ISendMailService {
 
     private final StringRedisTemplate stringRedisTemplate;
 
+    private final IUserRepository userService;
+
+    final static DateTimeFormatter CUSTOM_FORMATTER_Date = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    final static DateTimeFormatter CUSTOM_FORMATTER_Hour = DateTimeFormatter.ofPattern("HH:mm");
     @Value("skyairline7393@gmail.com")
     private String from;
 
@@ -56,6 +63,28 @@ public class SendMailServiceImpl implements ISendMailService {
         helper.setTo(user.getEmail());
         helper.setText(html, true);
         helper.setSubject("Mã xác thực email của bạn!!!");
+        helper.setFrom(from);
+        javaMailSender.send(message);
+    }
+
+    @Override
+    public void sendTicket(Ticket ticket) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
+        Context context = new Context();
+        context.setVariable("date", "Date: " + ticket.getFlightSchedule().getDepartureTime().format(CUSTOM_FORMATTER_Date));
+        context.setVariable("class","Class: " + ticket.getSeat().getTicketClass().getClassName());
+        context.setVariable("plane","Plane: " + ticket.getFlightSchedule().getPlaneName());
+        context.setVariable("seatCode","Seat Code: " + ticket.getSeat().getSeatCode());
+        context.setVariable("name", ticket.getUser().getUsername());
+        context.setVariable("departure", ticket.getFlightSchedule().getDepartureAirport().getLocation());
+        context.setVariable("arrival", ticket.getFlightSchedule().getArrivalAirport().getLocation());
+        context.setVariable("departureTime", ticket.getFlightSchedule().getDepartureTime().format(CUSTOM_FORMATTER_Hour));
+        context.setVariable("arrivalTime", ticket.getFlightSchedule().getArrivalTime().format(CUSTOM_FORMATTER_Hour));
+        String html = templateEngine.process("Ticket", context);
+        helper.setTo(ticket.getUser().getEmail());
+        helper.setText(html, true);
+        helper.setSubject("Vé máy bay SkyAirline của bạn!");
         helper.setFrom(from);
         javaMailSender.send(message);
     }

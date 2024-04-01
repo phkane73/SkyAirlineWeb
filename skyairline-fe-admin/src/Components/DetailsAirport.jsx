@@ -33,7 +33,7 @@ const style = {
   height: 600,
 };
 
-const DetailsAirport = ({ id, name, location, load }) => {
+const DetailsAirport = ({ id, name, location, load, onChildChange }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -79,9 +79,15 @@ const DetailsAirport = ({ id, name, location, load }) => {
   };
 
   const handleDelete = async (id) => {
-    await deleteFlightTime(id);
-    setOpenDialog(false);
-    setRender(!render);
+    const result = await deleteFlightTime(id);
+    if (result) {
+      setOpenDialog(false);
+      handleClose();
+    } else {
+      setOpenDialog(false);
+      setRender(!render);
+    }
+    onChildChange();
   };
 
   return (
@@ -163,7 +169,7 @@ const DetailsAirport = ({ id, name, location, load }) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {airports.map((a) => {
+                    {airports?.map((a) => {
                       return (
                         <TableRow key={a.id} style={{ cursor: "default" }}>
                           {a.from.airportName === name ? (
@@ -195,34 +201,34 @@ const DetailsAirport = ({ id, name, location, load }) => {
                                 style={{ fontSize: "30px", color: "red" }}
                               />
                             </button>
-                            <Dialog
-                              open={openDialog}
-                              onClose={handleCloseDialog}
-                              aria-labelledby="alert-dialog-title"
-                              aria-describedby="alert-dialog-description"
-                            >
-                              <DialogTitle id="alert-dialog-title">
-                                {
-                                  "Bạn có chắc chắn muốn xóa tuyến đường bay này!!"
-                                }
-                              </DialogTitle>
-                              <DialogActions>
-                                <button
-                                  className="bg-red-700 hover:bg-red-500 text-white font-bold py-2 ml-2 px-4 rounded transition-all"
-                                  onClick={handleCloseDialog}
-                                >
-                                  Thoát
-                                </button>
-
-                                <button
-                                  className="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 ml-2 px-4 rounded transition-all"
-                                  onClick={() => handleDelete(a.id)}
-                                >
-                                  Xác nhận xóa
-                                </button>
-                              </DialogActions>
-                            </Dialog>
                           </TableCell>
+                          <Dialog
+                            open={openDialog}
+                            onClose={handleCloseDialog}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {
+                                "Bạn có chắc chắn muốn xóa tuyến đường bay này!!"
+                              }
+                            </DialogTitle>
+                            <DialogActions>
+                              <button
+                                className="bg-red-700 hover:bg-red-500 text-white font-bold py-2 ml-2 px-4 rounded transition-all"
+                                onClick={handleCloseDialog}
+                              >
+                                Thoát
+                              </button>
+
+                              <button
+                                className="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 ml-2 px-4 rounded transition-all"
+                                onClick={() => handleDelete(a.id)}
+                              >
+                                Xác nhận xóa
+                              </button>
+                            </DialogActions>
+                          </Dialog>
                         </TableRow>
                       );
                     })}

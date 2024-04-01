@@ -2,18 +2,13 @@ import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import ListItemText from "@mui/material/ListItemText";
 import Seat from "../Components/Seat";
 import Menu from "@mui/material/Menu";
-import { setFlight } from "../Redux/reducers/SessionReducer";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import {
-  createPaymentPaypal,
-  capturePaymentPaypal,
-} from "../Services/PaymentServices";
+import { removeSeat, setFlight } from "../Redux/reducers/SessionReducer";
 
 const ChooseSeat = ({ onChangeStep }) => {
   onChangeStep(2);
@@ -21,6 +16,9 @@ const ChooseSeat = ({ onChangeStep }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleClick = () => {
+    if (Object.keys(seat).length > 0) {
+      dispatch(removeSeat(tk));
+    }
     navigate(-1);
   };
   const [price, setPrice] = useState(0);
@@ -29,12 +27,7 @@ const ChooseSeat = ({ onChangeStep }) => {
   const [seats, setSeats] = useState([]);
   const [rows, setRows] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const initialOptions = {
-    clientId:
-      "AVb4L9dRkYo_DCNxUPkyi38KPZuJW90TpzYthv6QIxhOBMJMns0rrfk3pWNSZAvPGm6LcVhXfsMJEM4l",
-    currency: "USD",
-    intent: "capture",
-  };
+
   const open = Boolean(anchorEl);
   const handleDown = (event) => {
     setAnchorEl(event.currentTarget);
@@ -45,12 +38,13 @@ const ChooseSeat = ({ onChangeStep }) => {
 
   const store = useSelector((state) => state.Session);
   const tk = useSelector((state) => state.Auth.token);
+  const seat = useSelector((state) => state.Session.seat);
   useEffect(() => {
     setF(store.flight);
     setTClass(store.ticketClass);
     setPrice(store.totalPrice);
     setSeats(store.flight.seatDetails);
-  }, [store, seats, tk]);
+  }, [store, seats]);
 
   useEffect(() => {
     const seatsCopy = [...seats];
@@ -61,6 +55,8 @@ const ChooseSeat = ({ onChangeStep }) => {
     }
     setRows(row);
   }, [seats]);
+
+  console.log(seats);
 
   useEffect(() => {
     const socket = new SockJS("http://localhost:8080/seatTopic");
@@ -77,23 +73,12 @@ const ChooseSeat = ({ onChangeStep }) => {
     connectAndSubscribe();
   }, [dispatch]);
 
-  const createOrder = async () => {
-    try {
-      const response = await createPaymentPaypal(price);
-      if (response !== null) return response;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const onApprove = async (data) => {
-    try {
-      const response = await capturePaymentPaypal(data.orderID);
-      if (response.data !== null) {
-        console.log("Success");
-      }
-    } catch (error) {
-      console.log(error);
+  const handlePayment = (e) => {
+    e.preventDefault();
+    if (Object.keys(seat).length === 0) {
+      alert("Vui lòng chọn chỗ ngồi!");
+    } else {
+      navigate("/booking/payment");
     }
   };
 
@@ -367,18 +352,12 @@ const ChooseSeat = ({ onChangeStep }) => {
                   </h1>
                 </div>
                 <div>
-                  <Link
-                    to="/booking/payment"
-                    className="bg-yellow-500 hover:bg-yellow-500/70 text-white font-bold py-3 px-4  transition-all flex justify-center pl-1 mt-2 uppercase text-xl rounded-lg"
+                  <button
+                    className="bg-yellow-500 hover:bg-yellow-500/70 text-white font-bold py-3 px-4  transition-all flex justify-center pl-1 mt-2 uppercase text-xl rounded-lg w-[100%]"
+                    onClick={handlePayment}
                   >
                     <span>Thanh toán</span>
-                  </Link>
-                  {/* <PayPalScriptProvider options={initialOptions}>
-                    <PayPalButtons
-                      onApprove={onApprove}
-                      createOrder={createOrder}
-                    />
-                  </PayPalScriptProvider> */}
+                  </button>
                 </div>
               </div>
             </div>

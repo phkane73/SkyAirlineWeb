@@ -17,5 +17,5 @@ public interface IFlightTimeService {
 
     boolean updatePrice(int id, Long price);
 
-    void deleteFlightTime(int id);
+    boolean deleteFlightTime(int id);
 }

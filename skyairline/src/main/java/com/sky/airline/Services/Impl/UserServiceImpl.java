@@ -87,6 +87,11 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     }
 
     @Override
+    public User getUserById(int userId) {
+        return iuserRepository.findById(userId).get();
+    }
+
+    @Override
     public void saveUser(User user) {
         iuserRepository.save(user);
     }

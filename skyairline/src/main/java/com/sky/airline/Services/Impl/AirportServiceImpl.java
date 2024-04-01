@@ -53,6 +53,11 @@ public class AirportServiceImpl implements IAirportService {
     }
 
     @Override
+    public void save(Airport airport) {
+        airportRepository.save(airport);
+    }
+
+    @Override
     public List<Airport> allAirport() {
         return airportRepository.findAll();
     }

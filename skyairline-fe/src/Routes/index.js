@@ -8,10 +8,12 @@ import ChooseFlight from "../Pages/ChooseFlight";
 import ValidInformation from "../Pages/ValidInformation";
 import ChooseSeat from "../Pages/ChooseSeat";
 import Payment from "../Pages/Payment";
+import TicketPage from "../Pages/TicketPage";
 const routes = [
   { path: "/", page: Home, layout: DefaultLayout },
   { path: "/login", page: Login, layout: LayoutAuth },
   { path: "/register", page: Register, layout: LayoutAuth },
+  { path: "/ticket", page: TicketPage, layout: DefaultLayout },
   {
     path: "/booking/chooseflight/:departure/:arrival/:date",
     page: ChooseFlight,

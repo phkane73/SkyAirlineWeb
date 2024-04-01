@@ -1,7 +1,9 @@
 package com.sky.airline.Services.Impl;
 
+import com.google.zxing.WriterException;
 import com.sky.airline.Services.IPaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Base64;
 
 @Service
@@ -16,6 +19,8 @@ import java.util.Base64;
 public class PaymentServiceImpl implements IPaymentService {
 
     private final String BASE_API_PAYPAL = "https://api-m.sandbox.paypal.com";
+
+    private final TicketServiceImpl ticketService;
 
     @Override
     public String getAuth(String client_id, String app_secret) {
@@ -73,7 +78,6 @@ public class PaymentServiceImpl implements IPaymentService {
                 entity,
                 Object.class
         );
-
         if (response.getStatusCode() == HttpStatus.CREATED) {
             return response.getBody();
         } else {
@@ -84,7 +88,7 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public Object capturePayment(String id) {
+    public Object capturePayment(String paymentId, String method, Float price, Integer seatId, Long flightId, Integer userId) throws IOException, WriterException {
         String accessToken = generateAccessToken();
         HttpHeaders headers = new HttpHeaders();
         RestTemplate restTemplate = new RestTemplate();
@@ -97,14 +101,14 @@ public class PaymentServiceImpl implements IPaymentService {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
         ResponseEntity<Object> response = restTemplate.exchange(
-                BASE_API_PAYPAL + "/v2/checkout/orders/" + id + "/capture",
+                BASE_API_PAYPAL + "/v2/checkout/orders/" + paymentId + "/capture",
                 HttpMethod.POST,
                 entity,
                 Object.class
         );
 
         if (response.getStatusCode() == HttpStatus.CREATED) {
-//            reservationService.updatePayment(paymentRequest.get("id"), paymentRequest.get("paymentId"), paymentRequest.get("total"));
+            ticketService.createTicket(method, price, seatId, flightId, userId, paymentId);
             return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
         } else {
             System.out.println("Unavailable to get CREATE AN ORDER, STATUS CODE " + response.getStatusCode());

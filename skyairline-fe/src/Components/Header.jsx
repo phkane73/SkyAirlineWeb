@@ -4,6 +4,7 @@ import { getInfo } from "../Services/UserServices";
 import { useDispatch, useSelector } from "react-redux";
 import { removeToken } from "../Redux/reducers/AuthReducer";
 import { removeSession } from "../Redux/reducers/SessionReducer";
+import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket";
 const Header = () => {
   const [username, setUsername] = useState("");
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const Header = () => {
   const logout = () => {
     localStorage.removeItem("token");
     dispatch(removeToken());
-    dispatch(removeSession());
+    dispatch(removeSession(auth));
     setUsername("");
     navigate("/");
   };
@@ -58,8 +59,12 @@ const Header = () => {
                 </Link>
               </div>
             ) : (
-              <div>
-                <i className="fa-solid fa-circle-user text-[#C6AB00] mr-2"></i>
+              <div className="flex items-center justify-between">
+                <Link to="/ticket" className="mr-5">
+                  <AirplaneTicketIcon />
+                  <span className="text-black">Vé của bạn</span>
+                </Link>
+                <i className="fa-solid fa-circle-user text-[#C6AB00] mx-2"></i>
                 <span className="text-black">Xin chào {username}</span>
                 <button
                   className="hover:text-[#C6AB00] transition-all ml-4 text-black"
