@@ -66,6 +66,7 @@ const ChooseFlight = ({ onChangeStep }) => {
     }
     fetchData();
   }, [departure, arrival, date, dispatch]);
+  console.log(listFlight);
 
   const store = useSelector((state) => state.Session.flights.data);
   const auth = useSelector((state) => state.Auth.token);
@@ -145,6 +146,9 @@ const ChooseFlight = ({ onChangeStep }) => {
             </div>
             <div className="flex flex-col items-center gap-10">
               {listFlight.map((flight) => {
+                var countBusiness = 0;
+                var countDeluxe = 0;
+                var countClassic = 0;
                 return (
                   <div
                     className=" bg-[#2D7690] backdrop-blur-xl w-[100%] h-[150px] rounded-md shadow-lg shadow-[#2D7690]/50 flex text-white py-1"
@@ -181,7 +185,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                             <h1 className="text-center leading-[50px] uppercase font-bold text-xl">
                               Business
                             </h1>
-                            <div className="flex flex-col items-center mt-[20px]">
+                            <div className="flex flex-col items-center mt-[10px]">
                               <span className="text-xl text-black">
                                 {flight.seatDetails.map((f) => {
                                   if (
@@ -190,6 +194,9 @@ const ChooseFlight = ({ onChangeStep }) => {
                                     businessPrice =
                                       f.seat.ticketClass.ticketClassPrice +
                                       flight.price;
+                                    if (f.status === "AVAILABLE") {
+                                      countBusiness++;
+                                    }
                                   }
                                   return "";
                                 })}
@@ -197,6 +204,9 @@ const ChooseFlight = ({ onChangeStep }) => {
                                   .format(businessPrice)
                                   .replaceAll(",", ",")}
                                 VND
+                              </span>
+                              <span className="text-black">
+                                Còn {countBusiness} ghế
                               </span>
                             </div>
                           </div>
@@ -226,6 +236,9 @@ const ChooseFlight = ({ onChangeStep }) => {
                                     deluxePrice =
                                       f.seat.ticketClass.ticketClassPrice +
                                       flight.price;
+                                    if (f.status === "AVAILABLE") {
+                                      countDeluxe++;
+                                    }
                                   }
                                   return "";
                                 })}
@@ -233,6 +246,9 @@ const ChooseFlight = ({ onChangeStep }) => {
                                   .format(deluxePrice)
                                   .replaceAll(",", ",")}
                                 VND
+                              </span>
+                              <span className="text-black">
+                                Còn {countDeluxe} ghế
                               </span>
                             </div>
                           </div>
@@ -262,6 +278,9 @@ const ChooseFlight = ({ onChangeStep }) => {
                                     classicPrice =
                                       f.seat.ticketClass.ticketClassPrice +
                                       flight.price;
+                                    if (f.status === "AVAILABLE") {
+                                      countClassic++;
+                                    }
                                   }
                                   return "";
                                 })}
@@ -269,6 +288,9 @@ const ChooseFlight = ({ onChangeStep }) => {
                                   .format(classicPrice)
                                   .replaceAll(",", ",")}
                                 VND
+                              </span>
+                              <span className="text-black">
+                                Còn {countClassic} ghế
                               </span>
                             </div>
                           </div>

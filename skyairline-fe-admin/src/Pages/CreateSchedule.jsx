@@ -61,7 +61,11 @@ const CreateSchedule = () => {
         const array = Object.values(data);
         setTotal(array.length);
         setMessage("");
-        setListSchedule(array);
+        if (array.length !== 0) {
+          setListSchedule(array);
+        } else {
+          alert("Ngày này đã có lịch bay!");
+        }
         setLoading(false);
       }
     }

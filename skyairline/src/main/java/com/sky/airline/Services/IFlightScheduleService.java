@@ -4,6 +4,7 @@ import com.sky.airline.Dto.AirportDTO;
 import com.sky.airline.Dto.PlaneDTO;
 import com.sky.airline.Entities.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -36,5 +37,7 @@ public interface IFlightScheduleService {
     void createSeatWithFlightSchedule(long idSchedule);
 
     FlightSchedule getFlightById(long id);
+
+    boolean isDateOfFlightSchedule( LocalDateTime start);
 
 }

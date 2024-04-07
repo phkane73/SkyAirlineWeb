@@ -42,7 +42,7 @@ const TicketPage = () => {
                 <div className="ticket mb-8 w-2/3 mx-auto shadow-xl border-solid border-[#afb2b3] border-2">
                   <div className="flex">
                     <img
-                      src="https://toanhocbactrungnam.vn/uploads/news/2019_11/1573006985.png"
+                      src={ticket.qrcode}
                       alt=""
                       className="w-[200px] h-[200px]"
                     />
@@ -68,7 +68,11 @@ const TicketPage = () => {
                       <div className="mx-3 border-t-2"></div>
                       <div className="px-3 text-2xl my-2 flex justify-between">
                         <h1>Total Value</h1>
-                        <h1 className="text-red-600">{ticket.ticketPrice}$</h1>
+                        <h1 className="text-red-600">
+                          {new Intl.NumberFormat()
+                            .format(ticket.ticketPrice)
+                            .replaceAll(",", ",") + "đ"}
+                        </h1>
                       </div>
                     </div>
                   </div>

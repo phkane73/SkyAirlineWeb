@@ -81,6 +81,7 @@ public class SendMailServiceImpl implements ISendMailService {
         context.setVariable("arrival", ticket.getFlightSchedule().getArrivalAirport().getLocation());
         context.setVariable("departureTime", ticket.getFlightSchedule().getDepartureTime().format(CUSTOM_FORMATTER_Hour));
         context.setVariable("arrivalTime", ticket.getFlightSchedule().getArrivalTime().format(CUSTOM_FORMATTER_Hour));
+        context.setVariable("qRCode", ticket.getQRCode());
         String html = templateEngine.process("Ticket", context);
         helper.setTo(ticket.getUser().getEmail());
         helper.setText(html, true);

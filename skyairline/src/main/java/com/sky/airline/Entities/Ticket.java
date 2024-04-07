@@ -23,6 +23,8 @@ public class Ticket implements Serializable {
     private String payMethod;
     private LocalDateTime payDate;
     private Float ticketPrice;
+    private String qRCode;
+    private Boolean checkRevenue;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -12,21 +12,19 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 
 @Service
 public class QRCodeToCloudinary {
 
-    public void createQRCodeToCloudinary() throws IOException, WriterException {
-        String data = "Ha noi mua thu";
-        int width = 200;
-        int height = 200;
-
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+    public String createQRCodeToCloudinary(String value) throws IOException, WriterException {
+        int width = 250;
+        int height = 250;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        BitMatrix matrix = new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, width, height);
+        BitMatrix matrix = new QRCodeWriter().encode(value, BarcodeFormat.QR_CODE, width, height);
 
         MatrixToImageWriter.writeToStream(matrix, "PNG", outputStream);
         byte[] imageBytes = outputStream.toByteArray();
@@ -35,7 +33,9 @@ public class QRCodeToCloudinary {
                 "cloud_name", "dzfwvoijo",
                 "api_key", "749281176233987",
                 "api_secret", "BzQjqSewHKCgvfLjeosAX8x8Z0o"));
-        cloudinary.uploader().upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-                ObjectUtils.asMap("public_id", "olympic_flag"));
+        Map<String, Object> uploadResult = cloudinary.uploader().upload(imageBytes, ObjectUtils.asMap(
+                "folder", "qr-code"
+        ));
+        return uploadResult.get("url").toString();
     }
 }

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -48,7 +49,7 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
 
     @Override
     public boolean overLimitTime(LocalDateTime timeArrival, LocalDateTime endTimeSchedule) {
-        return !timeArrival.isBefore(endTimeSchedule);
+        return timeArrival.isAfter(endTimeSchedule);
     }
 
     @Override
@@ -156,18 +157,31 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         return flightScheduleRepository.findById(id).get();
     }
 
+    @Override
+    public boolean isDateOfFlightSchedule(LocalDateTime start) {
+        LocalDateTime end = calculateDate(start, 23F);
+        List<FlightSchedule> flightSchedules = flightScheduleRepository.findAllByDepartureTimeBetween(start, end);
+        if(flightSchedules.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
 
     @Override
     public List<FlightSchedule> handleFlightSchedule(List<FlightTime> flightTimeList, String start, String end, int action) {
         LocalDateTime startDate = converToLocalDataTime(start);
         LocalDateTime endDate = converToLocalDataTime(end);
+        List<FlightSchedule> flightScheduleList = new ArrayList<>();
+        if(isDateOfFlightSchedule(startDate)){
+            return flightScheduleList;
+        }
         List<FlightScheduleDTO> flightSchedules = new ArrayList<>();
         List<Airport> airportList = airportService.allAirport();
         List<AirportDTO> airportDTOList = converToAirportDTO(airportList, startDate);
-
         int breakPoint = 0;
         while (breakPoint == 0) {
-            LocalDateTime currentTimeFlight = startDate;
+//            LocalDateTime currentTimeFlight = startDate;
             for (int i = 0; i < airportDTOList.toArray().length; i++) {
                 List<AirportDTO> listAirportNoCurrentAirport = listAirportTrim(airportDTOList, airportDTOList.get(i));
                 int quanlityPlaneCurrent = airportDTOList.get(i).getQuanlityPlaneCurrent();
@@ -183,7 +197,7 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
                             long price = getEstimateTime(flightTimeList, airportDTOList.get(i), stackAirport.peek()).getPrice();
                             LocalDateTime readyTime = airportDTOList.get(i).getPlaneLists().get(j).getReadyTime();
                             LocalDateTime timeArrival = calculateDate(readyTime, estimateTime);
-                            currentTimeFlight = timeArrival;
+//                            currentTimeFlight = timeArrival;
                             if (overLimitTime(timeArrival, endDate)) {
                                 breakPoint = 1;
                                 break;
@@ -198,7 +212,6 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
                             }
                             airportDTOList.get(i).getPlaneLists().get(j).setReadyTime(calculateDate(timeArrival, 1F));
                             flightScheduleDTO.setTo(stackAirport.pop());
-
                             flightScheduleDTO.setPlaneName(airportDTOList.get(i).getPlaneLists().get(j).getPlaneName());
                             airportDTOList.get(i).setQuanlityPlaneCurrent(airportDTOList.get(i).getQuanlityPlaneCurrent() - 1);
                             listPlaneScheduled.add(airportDTOList.get(i).getPlaneLists().get(j));
@@ -214,14 +227,13 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
                 for (PlaneDTO planeDTO : listPlaneScheduled) {
                     airportDTOList.get(i).getPlaneLists().remove(planeDTO);
                 }
-                if (compareTwoDates(currentTimeFlight, endDate)) {
-                    breakPoint = 1;
-                    break;
-                }
+//                if (compareTwoDates(currentTimeFlight, endDate)) {
+//                    breakPoint = 1;
+//                    break;
+//                }
             }
-            if (breakPoint == 1) break;
+//            if (breakPoint == 1) break;
         }
-        List<FlightSchedule> flightScheduleList = new ArrayList<>();
         long index = 0;
         for (FlightScheduleDTO flightScheduleDTO : flightSchedules) {
             Airport from = airportService.findAirportByAirportName(flightScheduleDTO.getFrom().getAirportName());

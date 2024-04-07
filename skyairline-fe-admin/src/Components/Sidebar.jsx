@@ -87,9 +87,9 @@ const Sidebar = () => {
               padding: "15px 10px 15px 10px",
             }}
           >
-            <i class="fa-regular fa-calendar-days"></i>
+            <i className="fa-regular fa-calendar-days"></i>
             <h1 className="pl-4">
-              Quản lý lịch bay <i class="fa-solid fa-caret-down"></i>
+              Quản lý lịch bay <i className="fa-solid fa-caret-down"></i>
             </h1>
           </Button>
           <Menu
@@ -119,11 +119,29 @@ const Sidebar = () => {
               to="/schedule/list"
               sx={{ color: "white" }}
             >
-              <i class="fa-solid fa-list"></i>
+              <i className="fa-solid fa-list"></i>
               <h1 className="pl-4">Danh sách chuyến bay</h1>
             </MenuItem>
           </Menu>
         </div>
+        <Button
+          style={{
+            color: "white",
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "flex-start",
+            fontSize: "18px",
+            fontWeight: "bold",
+            padding: "15px 10px 15px 10px",
+          }}
+          variant="elevated"
+          component={Link}
+          to="/revenue"
+        >
+          <i className="fa-solid fa-chart-line"></i>
+          <h1 className="pl-4">Quản lý thống kê</h1>
+        </Button>
       </div>
     </div>
   );

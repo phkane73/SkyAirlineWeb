@@ -50,7 +50,9 @@ public class TicketServiceImpl implements ITicketService {
         ticket.setPaymentId(paymentId);
         ticket.setPayDate(java.time.LocalDateTime.now());
         ticket.setUser(user);
-        qrCodeToCloudinary.createQRCodeToCloudinary();
+        ticket.setCheckRevenue(false);
+        String qrcode = qrCodeToCloudinary.createQRCodeToCloudinary(flightSchedule.getFlightCode());
+        ticket.setQRCode(qrcode);
         producerService.setTicket(ticket);
         ticketRepository.save(ticket);
         FlightSeatKey flightSeatKey = new FlightSeatKey(seat.getId(), flightScheduleId);
