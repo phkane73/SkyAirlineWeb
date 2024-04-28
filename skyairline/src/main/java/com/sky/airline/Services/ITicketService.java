@@ -19,4 +19,6 @@ public interface ITicketService {
     void sendTicket(Ticket ticket) throws MessagingException;
 
     List<Ticket> getTicketsByUserId(String token);
+
+    long count();
 }

@@ -130,11 +130,6 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         Airport arrivalAirport = airportService.findAirportById(arrival);
         LocalDateTime start = converToLocalDataTime(date);
         LocalDateTime end = calculateDate(start, 23F);
-        //Chưa xử lí hết ghế
-//        List<FlightSchedule> flightScheduleList = flightScheduleRepository.findAllByDepartureAirportAndArrivalAirportAndDepartureTimeBetween(departureAirport, arrivalAirport, start, end);
-//        for(FlightSchedule flightSchedule: flightScheduleList){
-//            flightSchedule.getSeatDetails().stream().filter()
-//        }
         return flightScheduleRepository.findAllByDepartureAirportAndArrivalAirportAndDepartureTimeBetween(departureAirport, arrivalAirport, start, end);
     }
 
@@ -167,6 +162,11 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         return true;
     }
 
+    @Override
+    public long countFlightSchedule() {
+        return flightScheduleRepository.count();
+    }
+
 
     @Override
     public List<FlightSchedule> handleFlightSchedule(List<FlightTime> flightTimeList, String start, String end, int action) {
@@ -181,7 +181,6 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         List<AirportDTO> airportDTOList = converToAirportDTO(airportList, startDate);
         int breakPoint = 0;
         while (breakPoint == 0) {
-//            LocalDateTime currentTimeFlight = startDate;
             for (int i = 0; i < airportDTOList.toArray().length; i++) {
                 List<AirportDTO> listAirportNoCurrentAirport = listAirportTrim(airportDTOList, airportDTOList.get(i));
                 int quanlityPlaneCurrent = airportDTOList.get(i).getQuanlityPlaneCurrent();
@@ -197,7 +196,6 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
                             long price = getEstimateTime(flightTimeList, airportDTOList.get(i), stackAirport.peek()).getPrice();
                             LocalDateTime readyTime = airportDTOList.get(i).getPlaneLists().get(j).getReadyTime();
                             LocalDateTime timeArrival = calculateDate(readyTime, estimateTime);
-//                            currentTimeFlight = timeArrival;
                             if (overLimitTime(timeArrival, endDate)) {
                                 breakPoint = 1;
                                 break;
@@ -227,12 +225,7 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
                 for (PlaneDTO planeDTO : listPlaneScheduled) {
                     airportDTOList.get(i).getPlaneLists().remove(planeDTO);
                 }
-//                if (compareTwoDates(currentTimeFlight, endDate)) {
-//                    breakPoint = 1;
-//                    break;
-//                }
             }
-//            if (breakPoint == 1) break;
         }
         long index = 0;
         for (FlightScheduleDTO flightScheduleDTO : flightSchedules) {

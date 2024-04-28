@@ -76,4 +76,16 @@ public class UserController {
         iUserService.saveUser(userOld);
         return new ResponseEntity<>(true,HttpStatus.OK);
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> allUsers() {
+        return new ResponseEntity<>(iUserService.allUser(),HttpStatus.OK);
+    }
+
+
+    @GetMapping("/count")
+    public ResponseEntity<?> userCount() {
+        return new ResponseEntity<>(iUserService.countUser(), HttpStatus.OK);
+    }
 }
+

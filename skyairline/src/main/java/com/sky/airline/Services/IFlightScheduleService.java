@@ -40,4 +40,6 @@ public interface IFlightScheduleService {
 
     boolean isDateOfFlightSchedule( LocalDateTime start);
 
+    long countFlightSchedule();
+
 }

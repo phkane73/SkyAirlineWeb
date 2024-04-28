@@ -136,4 +136,14 @@ public class AirportServiceImpl implements IAirportService {
         }
         return false;
     }
+
+    @Override
+    public long countAirport() {
+        int count = 0;
+        List<Airport> airports = airportRepository.findAllByIsOperationIsTrue();
+        for(Airport a: airports){
+            count++;
+        }
+        return count;
+    }
 }

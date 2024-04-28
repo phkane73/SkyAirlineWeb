@@ -3,6 +3,7 @@ package com.sky.airline.Services.Impl;
 import com.sky.airline.Config.Encrypt;
 import com.sky.airline.Config.JwtTokenProvider;
 import com.sky.airline.Dto.AuthRequest;
+import com.sky.airline.Dto.UserDTO;
 import com.sky.airline.Entities.User;
 import com.sky.airline.Repositories.IUserRepository;
 import com.sky.airline.Services.ISendMailService;
@@ -16,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +86,22 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     }
 
     @Override
+    public List<UserDTO> allUser() {
+        List<User> users = iuserRepository.findAll();
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for(User user: users){
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUsername(user.getUsername());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setBirthday(user.getBirthday());
+            userDTO.setId(user.getId());
+            userDTO.setPhone(user.getPhone());
+            userDTOList.add(userDTO);
+        }
+        return userDTOList;
+    }
+
+    @Override
     public User getUserByEmail(String email) {
         return iuserRepository.findByEmail(email);
     }
@@ -94,6 +114,11 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     @Override
     public void saveUser(User user) {
         iuserRepository.save(user);
+    }
+
+    @Override
+    public long countUser() {
+        return iuserRepository.count();
     }
 }
 

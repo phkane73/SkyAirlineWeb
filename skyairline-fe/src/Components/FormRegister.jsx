@@ -4,7 +4,8 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { register, verifyCode } from "../Services/UserServices";
-
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 const style = {
   position: "absolute",
   top: "50%",
@@ -44,7 +45,16 @@ const FormRegister = () => {
   const handleVeriflyCode = async () => {
     const data = await verifyCode(formData.email, formData.verifyCode);
     if (data) {
-      alert("Bạn đã đăng ký thành công");
+      toast.success("Đăng ký thành công", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -115,6 +125,18 @@ const FormRegister = () => {
   return (
     <div className="min-h-screen py-14">
       <div>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
         <div className="w-8/12 bg-[#FBFFF1] rounded-xl mx-auto shadow-2xl overflow-hidden flex">
           <div className="w-1/2 bg-img"></div>
           <div className="w-1/2 py-8 px-16 relative">

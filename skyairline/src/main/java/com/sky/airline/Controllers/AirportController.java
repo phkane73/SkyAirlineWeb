@@ -99,4 +99,9 @@ public class AirportController {
     public ResponseEntity<?>  deleteFlightTime(@RequestParam("id") int id) {
         return new ResponseEntity<>(flightTimeService.deleteFlightTime(id),HttpStatus.OK);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<?>  countAirport() {
+        return new ResponseEntity<>(airportService.countAirport(),HttpStatus.OK);
+    }
 }

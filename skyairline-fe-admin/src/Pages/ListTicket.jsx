@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,59 +6,56 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { listSchedule } from "../Services/ScheduleServices";
-import Search from "../Components/Search";
+import { getTickets } from "../Services/TicketServices";
+import dayjs from "dayjs";
 import CircularProgress from "@mui/material/CircularProgress";
+import Search from "../Components/Search";
 
-const ListSchedule = () => {
+const ListTicket = () => {
+  const [tickets, setTickets] = useState([]);
   const [data, setData] = useState([]);
-  const [listSchedules, setListSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function fetchData() {
-      const data = await listSchedule();
-      if (data) {
-        setData(data);
+      const result = await getTickets();
+      if (result) {
         setLoading(false);
-        setListSchedule(data);
+        setData(result);
+        setTickets(result);
       }
     }
     fetchData();
   }, []);
 
+  console.log(data);
+
   const handleSearch = (query) => {
     const filteredDate = query
-      ? listSchedules.filter(
+      ? tickets.filter(
           (item) =>
-            item.flightCode.toLowerCase().includes(query.toLowerCase()) ||
-            item.departureTime.includes(query) ||
-            item.arrivalTime.includes(query) ||
-            item.planeName.toLowerCase().includes(query.toLowerCase()) ||
-            item.departureAirport.airportName
-              .toLowerCase()
-              .includes(query.toLowerCase()) ||
-            item.arrivalAirport.airportName
+            item.paymentId.toLowerCase().includes(query.toLowerCase()) ||
+            item.flightSchedule.flightCode
               .toLowerCase()
               .includes(query.toLowerCase())
         )
       : data;
-    setListSchedule(filteredDate);
+    setTickets(filteredDate);
   };
 
   return (
     <div className="px-10 py-3">
+      <h1 className="text-center text-3xl font-bold">DANH SÁCH VÉ</h1>
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold my-5">DANH SÁCH CÁC CHUYẾN BAY</h1>
         <Search onSearch={handleSearch} />
       </div>
-
       {loading ? (
         <CircularProgress sx={{ marginLeft: 60, marginTop: 20 }} />
       ) : (
         <>
           <TableContainer
             component={Paper}
-            sx={{ maxHeight: 485, maxWidth: 1200 }}
+            sx={{ maxHeight: 480, maxWidth: 1200 }}
           >
             <Table
               sx={{ maxWidth: 1200 }}
@@ -72,84 +69,98 @@ const ListSchedule = () => {
                       backgroundColor: "black",
                       color: "white",
                       textTransform: "uppercase",
-                      fontSize: "16px",
+                      fontSize: "18px",
                     }}
                   >
-                    Mã số
+                    Ngày đặt
                   </TableCell>
                   <TableCell
                     style={{
                       backgroundColor: "black",
                       color: "white",
                       textTransform: "uppercase",
-                      fontSize: "16px",
+                      fontSize: "18px",
                     }}
                   >
-                    Tên máy bay
+                    Mã thanh toán
                   </TableCell>
                   <TableCell
                     style={{
                       backgroundColor: "black",
                       color: "white",
                       textTransform: "uppercase",
-                      fontSize: "16px",
+                      fontSize: "18px",
                     }}
                   >
-                    Điểm khởi hành
+                    Người đặt vé
                   </TableCell>
                   <TableCell
                     style={{
                       backgroundColor: "black",
                       color: "white",
                       textTransform: "uppercase",
-                      fontSize: "16px",
+                      fontSize: "18px",
                     }}
                   >
-                    Điểm đến
+                    Mã chuyến bay
                   </TableCell>
                   <TableCell
                     style={{
                       backgroundColor: "black",
                       color: "white",
                       textTransform: "uppercase",
-                      fontSize: "16px",
+                      fontSize: "18px",
                     }}
                   >
-                    Giờ khởi hành
+                    Mã ghế
                   </TableCell>
                   <TableCell
                     style={{
                       backgroundColor: "black",
                       color: "white",
                       textTransform: "uppercase",
-                      fontSize: "16px",
+                      fontSize: "18px",
                     }}
                   >
-                    Giờ đến
+                    Giá vé
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {listSchedules.map((s) => {
+                {tickets.map((t) => {
                   return (
-                    <TableRow key={s.id} style={{ cursor: "default" }}>
-                      <TableCell>{s.flightCode}</TableCell>
-                      <TableCell>{s.planeName}</TableCell>
-                      <TableCell>{s.departureAirport.airportName}</TableCell>
-                      <TableCell>{s.arrivalAirport.airportName}</TableCell>
-                      <TableCell>{s.departureTime}</TableCell>
-                      <TableCell>{s.arrivalTime}</TableCell>
+                    <TableRow key={t.id}>
+                      <TableCell style={{ fontSize: "16px" }}>
+                        {dayjs(t.payDate).format("DD/MM/YYYY")}
+                      </TableCell>
+                      <TableCell style={{ fontSize: "16px" }}>
+                        {t.paymentId}
+                      </TableCell>
+                      <TableCell style={{ fontSize: "16px" }}>
+                        {t.user.username}
+                      </TableCell>
+                      <TableCell style={{ fontSize: "16px" }}>
+                        {t.flightSchedule.flightCode}
+                      </TableCell>
+                      <TableCell style={{ fontSize: "16px" }}>
+                        {t.seat.seatCode}
+                      </TableCell>
+                      <TableCell style={{ fontSize: "16px" }}>
+                        {new Intl.NumberFormat()
+                          .format(t.ticketPrice)
+                          .replaceAll(",", ".") + " đ"}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
               </TableBody>
             </Table>
-          </TableContainer>
-          <h4 className="mt-4">Total: {listSchedules.length}</h4>
+          </TableContainer>{" "}
+          <h4 className="mt-2">Total: {tickets.length}</h4>
         </>
       )}
     </div>
   );
 };
 
-export default ListSchedule;
+export default ListTicket;

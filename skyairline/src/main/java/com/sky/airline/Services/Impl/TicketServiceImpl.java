@@ -78,4 +78,9 @@ public class TicketServiceImpl implements ITicketService {
         User user = userService.getUserByEmail(email);
         return ticketRepository.findAllByUserId(user.getId());
     }
+
+    @Override
+    public long count() {
+        return ticketRepository.count();
+    }
 }

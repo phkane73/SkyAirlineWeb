@@ -11,7 +11,8 @@ import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import CircularProgress from "@mui/joy/CircularProgress";
-// import LinearProgress from "@mui/joy/LinearProgress";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Payment = ({ onChangeStep }) => {
   onChangeStep(3);
   const initialOptions = {
@@ -55,7 +56,16 @@ const Payment = ({ onChangeStep }) => {
         );
         if (response !== null) {
           setLoading(false);
-          alert("Thanh toán thành công");
+          toast.success("🦄 Wow so easy!", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
           navigate("/ticket");
         }
       }
@@ -85,6 +95,18 @@ const Payment = ({ onChangeStep }) => {
         />
       ) : (
         <>
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
           <div className="h-[50px] flex items-center bg-white pl-2 mb-5">
             <button
               to="/"

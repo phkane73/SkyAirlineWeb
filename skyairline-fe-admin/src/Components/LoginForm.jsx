@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const FormLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -7,7 +7,7 @@ const FormLogin = () => {
   });
 
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -22,7 +22,7 @@ const FormLogin = () => {
     const newErrors = {};
 
     //Email không được để trống
-    if (!formData.email.trim()) {
+    if (!formData.password.trim()) {
       newErrors.email = "Vui lòng nhập địa chỉ email";
     }
     //Mật khẩu k được bỏ trống
@@ -33,6 +33,16 @@ const FormLogin = () => {
       if (formData.password.length < 6 || formData.password.length > 20) {
         newErrors.password = "Mật khẩu phải từ 6 đến 20 kí tự";
       }
+    }
+
+    if (
+      formData.email === "phkane732002@gmail.com" &&
+      formData.password === "123456"
+    ) {
+      navigate("/overview");
+      localStorage.setItem("auth", 1);
+    } else {
+      newErrors.password = "Tài khoản hoặc mật khẩu không chính xác!";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -46,19 +56,10 @@ const FormLogin = () => {
     <div>
       <div className="min-h-screen py-32">
         <div className="container">
-          <div className="w-8/12 bg-[#FBFFF1] rounded-xl mx-auto shadow-2xl overflow-hidden flex">
-            <div className="w-1/2 bg-img"></div>
-            <div className="w-1/2 py-8 px-16 relative">
-              <i
-                className="fa-solid fa-house cursor-pointer text-2xl text-blue-700 
-              float-end absolute top-2 right-4 hover:text-[#C6AB00] transition-all"
-              ></i>
-              <h1 className="text-3xl font-bold uppercase mb-1">
-                Chào mừng bạn đã quay lại!
-              </h1>
-              <h3 className="mb-4 text-[#6E757F] ">
-                Hãy đăng nhập tài khoản để đặt vé máy bay
-              </h3>
+          <div className="bg-[#FBFFF1] rounded-xl mx-auto shadow-2xl overflow-hidden flex w-[370px]">
+            <div className="py-8 px-16 relative">
+              <h1 className="text-3xl font-bold uppercase mb-1">đăng nhập</h1>
+              <h3 className="mb-4 text-[#6E757F] ">Hãy đăng nhập tài khoản</h3>
               <form onSubmit={handleSubmit}>
                 <label className="block mt-5">
                   <span className="block text-sm font-medium text-slate-700 mb-2">
@@ -103,7 +104,6 @@ const FormLogin = () => {
                     </p>
                   )}
                 </label>
-
                 <button
                   className="mt-5 text-white font-semibold py-2 px-10 bg-blue-700 border rounded
                 hover:bg-[#C6AB00] hover:text-white transition-all float-start"
@@ -116,12 +116,6 @@ const FormLogin = () => {
                 hover:text-[#C6AB00]"
                 ></i> */}
               </form>
-              <div className="mt-5 cursor-default float-end">
-                Bạn chưa có tài khoản hãy{" "}
-                <div className="text-blue-700 font-semibold cursor-pointer hover:text-[#C6AB00]">
-                  đăng ký tài khoản.
-                </div>
-              </div>
             </div>
           </div>
         </div>

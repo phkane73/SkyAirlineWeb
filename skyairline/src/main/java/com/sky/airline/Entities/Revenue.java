@@ -20,5 +20,5 @@ public class Revenue {
     private Long id;
 
     private LocalDate date;
-    private Float totalRevenue;
+    private float totalRevenue;
 }

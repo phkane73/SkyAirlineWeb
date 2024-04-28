@@ -27,4 +27,6 @@ public interface IAirportService {
     void deActiveAirport(int id);
 
     boolean activeAirport(int id);
+
+    long countAirport();
 }

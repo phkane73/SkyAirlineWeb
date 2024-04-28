@@ -1,7 +1,6 @@
 import DefaultLayout from "./Layouts/DefaultLayout";
 import routes from "./Routes";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
 function App() {
   return (
     <div className="App">

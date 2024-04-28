@@ -11,7 +11,8 @@ import Modal from "@mui/material/Modal";
 import CircularProgress from "@mui/joy/CircularProgress";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlights } from "../Redux/reducers/SessionReducer";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const style = {
   position: "absolute",
   top: "50%",
@@ -66,7 +67,6 @@ const ChooseFlight = ({ onChangeStep }) => {
     }
     fetchData();
   }, [departure, arrival, date, dispatch]);
-  console.log(listFlight);
 
   const store = useSelector((state) => state.Session.flights.data);
   const auth = useSelector((state) => state.Auth.token);
@@ -76,15 +76,40 @@ const ChooseFlight = ({ onChangeStep }) => {
     }
   }, [store]);
 
-  const handleAuth = (e) => {
+  const handleAuth = (e, count) => {
     if (!auth) {
       e.preventDefault();
       navigate("/login");
+    }
+    if (count === 0) {
+      e.preventDefault();
+      toast.error("🦄 Wow so easy!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <div className="container my-5">
         <div className="h-[50px] flex items-center bg-white sticky top-0 z-50 pl-2 mb-5">
           <Link
@@ -178,7 +203,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                       <div className="w-1/3 bg-white rounded-md flex flex-col">
                         <Link
                           to={`/booking/validinformation/${flight.id}/${1}`}
-                          onClick={handleAuth}
+                          onClick={(e) => handleAuth(e, countBusiness)}
                           className="h-[100%]"
                         >
                           <div className="h-[50px] rounded-t-md bg-[#dbb42c]">
@@ -221,6 +246,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                       <div className="w-1/3 bg-white flex flex-col rounded-md">
                         <Link
                           to={`/booking/validinformation/${flight.id}/${2}`}
+                          onClick={(e) => handleAuth(e, countDeluxe)}
                           className="h-[100%]"
                         >
                           <div className="h-[50px] rounded-t-md bg-[#cb0303]">
@@ -263,6 +289,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                       <div className="w-1/3 mr-1 bg-white rounded-md flex flex-col">
                         <Link
                           to={`/booking/validinformation/${flight.id}/${3}`}
+                          onClick={(e) => handleAuth(e, countClassic)}
                           className="h-[100%]"
                         >
                           <div className="h-[50px] rounded-t-md bg-[#058c42]">

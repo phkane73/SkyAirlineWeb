@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeToken } from "../Redux/reducers/AuthReducer";
 import { removeSession } from "../Redux/reducers/SessionReducer";
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket";
+import { jwtDecode } from "jwt-decode";
 const Header = () => {
   const [username, setUsername] = useState("");
   const dispatch = useDispatch();
@@ -21,6 +22,18 @@ const Header = () => {
     }
     fetchData();
   }, [username, auth]);
+
+  useEffect(() => {
+    if (auth) {
+      const decodedToken = jwtDecode(auth);
+      // Kiểm tra thời gian hết hạn của token
+      const currentTime = Date.now() / 1000; // Chuyển đổi thời gian hiện tại thành giây
+      if (decodedToken.exp < currentTime) {
+        dispatch(removeToken());
+        navigate("/");
+      }
+    }
+  });
 
   const logout = () => {
     localStorage.removeItem("token");

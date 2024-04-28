@@ -22,7 +22,7 @@ public class Ticket implements Serializable {
     private String paymentId;
     private String payMethod;
     private LocalDateTime payDate;
-    private Float ticketPrice;
+    private float ticketPrice;
     private String qRCode;
     private Boolean checkRevenue;
 

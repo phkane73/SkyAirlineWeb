@@ -21,3 +21,12 @@ export const listSchedule = async () => {
     console.error("Error fetching data:", error);
   }
 };
+
+export const flightCount = async () => {
+  try {
+    const response = await API.get("/api/public/flightschedule/count");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};

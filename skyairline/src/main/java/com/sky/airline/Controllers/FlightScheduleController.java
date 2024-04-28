@@ -53,4 +53,9 @@ public class FlightScheduleController {
     public ResponseEntity<?> findAllFlight(@RequestParam("id") long id) {
         return new ResponseEntity<>(flightScheduleService.getFlightById(id), HttpStatus.OK);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> countFlight() {
+        return new ResponseEntity<>(flightScheduleService.countFlightSchedule(), HttpStatus.OK);
+    }
 }

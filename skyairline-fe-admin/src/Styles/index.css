@@ -13,3 +13,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.bg-img {
+  background-image: url(../../public/Assets/images/admin.png);
+  background-size: 400px 400px;
+  background-position-y: center;
+}

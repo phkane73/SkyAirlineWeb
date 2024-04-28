@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { findFlight } from "../Services/FlightServices";
 import { useDispatch, useSelector } from "react-redux";
 import { removeSession } from "../Redux/reducers/SessionReducer";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Home = () => {
   const [listAirportDeparture, setListAirportDeparture] = useState([]);
   const [listAirportArrival, setListAirportArrival] = useState([]);
@@ -76,7 +78,16 @@ const Home = () => {
         dayjs(date).format("YYYY-MM-DD HH:mm")
       );
       if (datas.length === 0) {
-        alert("Không có chuyến bay nào phù hợp!");
+        toast.error("Không có chuyến bay phù hợp!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       } else {
         Navigate(
           `/booking/chooseflight/${departure.id}/${arrival.id}/${dayjs(
@@ -89,6 +100,20 @@ const Home = () => {
 
   return (
     <div className="relative">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
       <Carousel></Carousel>
       <div className="container absolute top-[100px] z-50">
         <div className="bg-white/80 backdrop-blur-xl mt-2 rounded-lg p-8 shadow-xl float-end flex flex-col items-center">

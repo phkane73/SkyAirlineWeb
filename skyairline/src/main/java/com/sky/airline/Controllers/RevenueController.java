@@ -1,6 +1,6 @@
 package com.sky.airline.Controllers;
 
-import com.sky.airline.Services.KafkaService.IRevenueService;
+import com.sky.airline.Services.IRevenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,5 +21,20 @@ public class RevenueController {
     public ResponseEntity<?> countRevenue(){
         revenueService.countRevenue();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> revenues(){
+        return new ResponseEntity<>(revenueService.revenues(),HttpStatus.OK);
+    }
+
+    @GetMapping("/month")
+    public ResponseEntity<?> revenueMonths(){
+        return new ResponseEntity<>(revenueService.revenueMonths(),HttpStatus.OK);
+    }
+
+    @GetMapping("/year")
+    public ResponseEntity<?> revenueYears(){
+        return new ResponseEntity<>(revenueService.revenueYears(),HttpStatus.OK);
     }
 }

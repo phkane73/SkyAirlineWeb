@@ -114,3 +114,12 @@ export const deleteFlightTime = async (id) => {
     console.error("Error fetching data:", error);
   }
 };
+
+export const airportCount = async (id) => {
+  try {
+    const response = await API.get("/api/public/airport/count");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};

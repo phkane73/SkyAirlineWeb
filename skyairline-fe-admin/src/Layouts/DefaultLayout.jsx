@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Sidebar from "../Components/Sidebar";
 import Grid from "@mui/material/Grid";
 
 const DefaultLayout = ({ children }) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!localStorage.getItem("auth")) {
+      navigate("/");
+    }
+  });
   return (
     <div>
       <Header />

@@ -9,7 +9,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Seat from "../Components/Seat";
 import Menu from "@mui/material/Menu";
 import { removeSeat, setFlight } from "../Redux/reducers/SessionReducer";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const ChooseSeat = ({ onChangeStep }) => {
   onChangeStep(2);
   const fee = 584000;
@@ -56,8 +57,6 @@ const ChooseSeat = ({ onChangeStep }) => {
     setRows(row);
   }, [seats]);
 
-  console.log(seats);
-
   useEffect(() => {
     const socket = new SockJS("http://localhost:8080/seatTopic");
     const stompClient = Stomp.over(socket);
@@ -76,7 +75,16 @@ const ChooseSeat = ({ onChangeStep }) => {
   const handlePayment = (e) => {
     e.preventDefault();
     if (Object.keys(seat).length === 0) {
-      alert("Vui lòng chọn chỗ ngồi!");
+      toast.warn("Vui lòng chọn ghế!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       navigate("/booking/payment");
     }
@@ -84,6 +92,18 @@ const ChooseSeat = ({ onChangeStep }) => {
 
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <div className="container my-5">
         <div className="h-[50px] flex items-center bg-white sticky top-0 z-50 pl-2 mb-5">
           <button

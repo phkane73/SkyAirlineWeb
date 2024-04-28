@@ -28,10 +28,46 @@ const Sidebar = () => {
           }}
           variant="elevated"
           component={Link}
-          to="/"
+          to="/overview"
         >
           <i className="fa-solid fa-table-cells-large"></i>
           <h1 className="pl-4">Tổng quan</h1>
+        </Button>
+        <Button
+          style={{
+            color: "white",
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "flex-start",
+            fontSize: "18px",
+            fontWeight: "bold",
+            padding: "15px 10px 15px 10px",
+          }}
+          variant="elevated"
+          component={Link}
+          to="/ticket"
+        >
+          <i className="fa-solid fa-ticket"></i>
+          <h1 className="pl-4">Quản lý vé</h1>
+        </Button>
+        <Button
+          style={{
+            color: "white",
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "flex-start",
+            fontSize: "18px",
+            fontWeight: "bold",
+            padding: "15px 10px 15px 10px",
+          }}
+          variant="elevated"
+          component={Link}
+          to="/users"
+        >
+          <i className="fa-solid fa-clipboard-list"></i>
+          <h1 className="pl-4">Quản lý người dùng</h1>
         </Button>
         <Button
           style={{

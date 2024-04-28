@@ -47,7 +47,6 @@ export default function AirportManagement() {
           return 1;
         })
       );
-      console.log(data);
     }
     fetchData();
   }, [render]);
