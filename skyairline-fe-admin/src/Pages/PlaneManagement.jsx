@@ -46,15 +46,16 @@ const PlaneManagement = () => {
   }
 
   const handleSearch = (query) => {
-    const filteredDate = query
-      ? listPlane.filter(
-          (item) =>
-            item.planeName.toLowerCase().includes(query.toLowerCase()) ||
-            item.onAirport.airportName
-              .toLowerCase()
-              .includes(query.toLowerCase())
-        )
-      : data;
+    const filteredDate =
+      query !== ""
+        ? listPlane.filter(
+            (item) =>
+              item.planeName.toLowerCase().includes(query.toLowerCase()) ||
+              item.onAirport.airportName
+                .toLowerCase()
+                .includes(query.toLowerCase())
+          )
+        : data;
     setListPlane(filteredDate);
   };
 

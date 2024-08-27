@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import TextField from "@mui/material/TextField";
+import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
-import CloseIcon from "@mui/icons-material/Close";
+import TextField from "@mui/material/TextField";
+import React, { useState } from "react";
 const Search = ({ onSearch }) => {
   const [query, setQuery] = useState("");
 
@@ -12,6 +12,9 @@ const Search = ({ onSearch }) => {
   };
 
   const handleChange = (event) => {
+    if (event.target.value === "") {
+      onSearch("");
+    }
     setQuery(event.target.value);
   };
 
@@ -31,6 +34,7 @@ const Search = ({ onSearch }) => {
                 variant="outlined"
                 onClick={() => {
                   setQuery("");
+                  return onSearch("");
                 }}
                 style={{ cursor: "pointer" }}
               ></CloseIcon>

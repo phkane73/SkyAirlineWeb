@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-  getAllAirport,
-  activeAirport,
-  deActiveAirport,
-} from "../Services/AirportServices";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,15 +10,16 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import DetailsAirport from "../Components/DetailsAirport";
+import React, { useEffect, useState } from "react";
 import AddAirport from "../Components/AddAirport";
-import UpdateFlightTime from "../Components/UpdateFlightTime";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import DetailsAirport from "../Components/DetailsAirport";
 import Search from "../Components/Search";
+import UpdateFlightTime from "../Components/UpdateFlightTime";
+import {
+  activeAirport,
+  deActiveAirport,
+  getAllAirport,
+} from "../Services/AirportServices";
 
 export default function AirportManagement() {
   const [data, setData] = useState([]);
@@ -71,11 +71,12 @@ export default function AirportManagement() {
   };
 
   const handleSearch = (query) => {
-    const filteredDate = query
-      ? listAirport.filter((item) =>
-          item.airportName.toLowerCase().includes(query.toLowerCase())
-        )
-      : data;
+    const filteredDate =
+      query !== ""
+        ? listAirport.filter((item) =>
+            item.airportName.toLowerCase().includes(query.toLowerCase())
+          )
+        : data;
     setListAirport(filteredDate);
   };
 

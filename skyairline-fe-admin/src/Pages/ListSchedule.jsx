@@ -27,21 +27,22 @@ const ListSchedule = () => {
   }, []);
 
   const handleSearch = (query) => {
-    const filteredDate = query
-      ? listSchedules.filter(
-          (item) =>
-            item.flightCode.toLowerCase().includes(query.toLowerCase()) ||
-            item.departureTime.includes(query) ||
-            item.arrivalTime.includes(query) ||
-            item.planeName.toLowerCase().includes(query.toLowerCase()) ||
-            item.departureAirport.airportName
-              .toLowerCase()
-              .includes(query.toLowerCase()) ||
-            item.arrivalAirport.airportName
-              .toLowerCase()
-              .includes(query.toLowerCase())
-        )
-      : data;
+    const filteredDate =
+      query !== ""
+        ? listSchedules.filter(
+            (item) =>
+              item.flightCode.toLowerCase().includes(query.toLowerCase()) ||
+              item.departureTime.includes(query) ||
+              item.arrivalTime.includes(query) ||
+              item.planeName.toLowerCase().includes(query.toLowerCase()) ||
+              item.departureAirport.airportName
+                .toLowerCase()
+                .includes(query.toLowerCase()) ||
+              item.arrivalAirport.airportName
+                .toLowerCase()
+                .includes(query.toLowerCase())
+          )
+        : data;
     setListSchedule(filteredDate);
   };
 

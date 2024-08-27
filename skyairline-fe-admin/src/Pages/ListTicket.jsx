@@ -31,15 +31,16 @@ const ListTicket = () => {
   console.log(data);
 
   const handleSearch = (query) => {
-    const filteredDate = query
-      ? tickets.filter(
-          (item) =>
-            item.paymentId.toLowerCase().includes(query.toLowerCase()) ||
-            item.flightSchedule.flightCode
-              .toLowerCase()
-              .includes(query.toLowerCase())
-        )
-      : data;
+    const filteredDate =
+      query !== ""
+        ? tickets.filter(
+            (item) =>
+              item.paymentId.toLowerCase().includes(query.toLowerCase()) ||
+              item.flightSchedule.flightCode
+                .toLowerCase()
+                .includes(query.toLowerCase())
+          )
+        : data;
     setTickets(filteredDate);
   };
 

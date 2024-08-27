@@ -182,7 +182,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                     <div className="w-1/2 h-[100%] flex flex-col items-center justify-center gap-1 text-gray-200">
                       <span>Mã chuyến bay: {flight.flightCode}</span>
                       <span>Máy bay: {flight.planeName}</span>
-                      <span>Còn 8 ghế</span>
+                      {/* <span>Còn 8 ghế</span> */}
                       <div className="flex gap-1">
                         <div className="flex flex-col items-center">
                           <span className="text-xl">
