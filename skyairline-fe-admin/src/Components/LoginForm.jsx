@@ -1,5 +1,7 @@
+import dotenv from "dotenv";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+dotenv.config();
 const FormLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -36,8 +38,8 @@ const FormLogin = () => {
     }
 
     if (
-      formData.email === "phkane732002@gmail.com" &&
-      formData.password === "123456"
+      formData.email === process.env.EMAIL &&
+      formData.password === process.env.PASSWORD
     ) {
       navigate("/overview");
       localStorage.setItem("auth", 1);
