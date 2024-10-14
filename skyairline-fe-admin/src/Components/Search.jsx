@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
-const Search = ({ onSearch }) => {
+const Search = ({ onSearch, text }) => {
   const [query, setQuery] = useState("");
 
   const handleSearch = () => {
@@ -12,20 +12,21 @@ const Search = ({ onSearch }) => {
   };
 
   const handleChange = (event) => {
-    if (event.target.value === "") {
-      onSearch("");
+    if (!event.target.value) {
+      onSearch(undefined);
     }
     setQuery(event.target.value);
   };
 
   return (
-    <div className="flex items-center mb-2">
+    <div className="flex items-center mb-2 w-[350px]">
       <TextField
         value={query}
         id="filled-basic"
-        label="Search..."
+        label={text}
         variant="filled"
         size="small"
+        fullWidth
         onChange={handleChange}
         InputProps={{
           endAdornment: (

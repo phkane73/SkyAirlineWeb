@@ -1,8 +1,8 @@
-import * as React from "react";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import * as React from "react";
+import { Link } from "react-router-dom";
 const Sidebar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -13,7 +13,7 @@ const Sidebar = () => {
     setAnchorEl(null);
   };
   return (
-    <div className="bg-[#2D7690] min-h-[628px] pt-4">
+    <div className="bg-[#2D7690] min-h-[620px] pt-4">
       <div className="sidebar_body">
         <Button
           style={{
@@ -31,25 +31,7 @@ const Sidebar = () => {
           to="/overview"
         >
           <i className="fa-solid fa-table-cells-large"></i>
-          <h1 className="pl-4">Tổng quan</h1>
-        </Button>
-        <Button
-          style={{
-            color: "white",
-            width: "100%",
-            textAlign: "left",
-            display: "flex",
-            justifyContent: "flex-start",
-            fontSize: "18px",
-            fontWeight: "bold",
-            padding: "15px 10px 15px 10px",
-          }}
-          variant="elevated"
-          component={Link}
-          to="/ticket"
-        >
-          <i className="fa-solid fa-ticket"></i>
-          <h1 className="pl-4">Quản lý vé</h1>
+          <h1 className="pl-4">Overview</h1>
         </Button>
         <Button
           style={{
@@ -67,7 +49,25 @@ const Sidebar = () => {
           to="/users"
         >
           <i className="fa-solid fa-clipboard-list"></i>
-          <h1 className="pl-4">Quản lý người dùng</h1>
+          <h1 className="pl-4">Display List User</h1>
+        </Button>
+        <Button
+          style={{
+            color: "white",
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "flex-start",
+            fontSize: "18px",
+            fontWeight: "bold",
+            padding: "15px 10px 15px 10px",
+          }}
+          variant="elevated"
+          component={Link}
+          to="/planePosition"
+        >
+          <i className="fa-solid fa-map-location-dot"></i>
+          <h1 className="pl-4">Plane Position</h1>
         </Button>
         <Button
           style={{
@@ -85,7 +85,7 @@ const Sidebar = () => {
           to="/plane"
         >
           <i className="fa-solid fa-plane"></i>
-          <h1 className="pl-4">Quản lý máy bay</h1>
+          <h1 className="pl-4">Plane</h1>
         </Button>
         <Button
           style={{
@@ -103,7 +103,25 @@ const Sidebar = () => {
           to="/airport"
         >
           <i className="fa-solid fa-inbox"></i>
-          <h1 className="pl-4">Quản lý sân bay</h1>
+          <h1 className="pl-4">Airport</h1>
+        </Button>
+        <Button
+          style={{
+            color: "white",
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "flex-start",
+            fontSize: "18px",
+            fontWeight: "bold",
+            padding: "15px 10px 15px 10px",
+          }}
+          variant="elevated"
+          component={Link}
+          to="/ticket"
+        >
+          <i className="fa-solid fa-ticket"></i>
+          <h1 className="pl-4">Ticket Management</h1>
         </Button>
         <div>
           <Button

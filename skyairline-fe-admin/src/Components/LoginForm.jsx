@@ -1,7 +1,9 @@
-import dotenv from "dotenv";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-dotenv.config();
+
+const email = "andy123@gmail.com";
+const password = "123456";
+
 const FormLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -38,8 +40,8 @@ const FormLogin = () => {
     }
 
     if (
-      formData.email === process.env.EMAIL &&
-      formData.password === process.env.PASSWORD
+      formData.email === email &&
+      formData.password === password
     ) {
       navigate("/overview");
       localStorage.setItem("auth", 1);
@@ -111,12 +113,8 @@ const FormLogin = () => {
                 hover:bg-[#C6AB00] hover:text-white transition-all float-start"
                   type="submit"
                 >
-                  Đăng ký
+                  Đăng Nhập
                 </button>
-                {/* <i
-                  class="text-2xl cursor-pointer fa-solid fa-house text-blue-700 hover:text-3xl transition-all
-                hover:text-[#C6AB00]"
-                ></i> */}
               </form>
             </div>
           </div>

@@ -1,18 +1,20 @@
 import Login from "../Components/LoginForm";
-import Overview from "../Pages/Overview";
-import Airport from "../Pages/AirportManagement";
-import Plane from "../Pages/PlaneManagement";
+import AuthLayout from "../Layouts/AuthLayout";
 import CreateSchedule from "../Pages/CreateSchedule";
 import ListSchedule from "../Pages/ListSchedule";
-import RevenueManagement from "../Pages/RevenueManagement";
 import ListTicket from "../Pages/ListTicket";
 import ListUser from "../Pages/ListUser";
-import AuthLayout from "../Layouts/AuthLayout";
+import Overview from "../Pages/Overview";
+import RevenueManagement from "../Pages/RevenueManagement";
+import Airport from "../Pages/v2/AirportManagement";
+import Plane from "../Pages/v2/PlaneManagement";
+import PlanePosition from "../Pages/v2/PlanePositionManagement";
 const routes = [
   { path: "/overview", page: Overview },
   { path: "/", page: Login, layout: AuthLayout },
   { path: "/airport", page: Airport },
   { path: "/plane", page: Plane },
+  { path: "/planePosition", page: PlanePosition },
   { path: "/schedule/create", page: CreateSchedule },
   { path: "/schedule/list", page: ListSchedule },
   { path: "/revenue", page: RevenueManagement },
