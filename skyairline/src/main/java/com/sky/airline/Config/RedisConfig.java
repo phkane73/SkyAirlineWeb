@@ -1,5 +1,6 @@
 package com.sky.airline.Config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -11,12 +12,21 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 public class RedisConfig {
 
+    @Value("${redis.host}")
+    private String redisHost;
+
+    @Value("${redis.port}")
+    private int redisPort;
+
+    @Value("${redis.password}")
+    private String redisPassword;
+
     @Bean
-    public JedisConnectionFactory connectionFactory(){
+    public JedisConnectionFactory connectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-        configuration.setHostName("redis-18661.c292.ap-southeast-1-1.ec2.redns.redis-cloud.com");
-        configuration.setPort(18661);
-        configuration.setPassword("dKmcHhFD0fHUXrLfODfJezC4Kx7LW3ca");
+        configuration.setHostName(redisHost);
+        configuration.setPort(redisPort);
+        configuration.setPassword(redisPassword);
         return new JedisConnectionFactory(configuration);
     }
 
