@@ -18,7 +18,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 900,
+  width: 1000,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -87,6 +87,14 @@ export default function EditRunway({ runways, onChildChange }) {
     setFormData(updatedFormData);
   };
 
+  const handleResetAvailableTime = async (id) => {
+    const res = await resetAvailableTime(id);
+    if (res.code === 200) {
+      onChildChange();
+    }
+    handleAlert(res.code, res.message);
+  };
+
   return (
     <div>
       <button
@@ -116,7 +124,10 @@ export default function EditRunway({ runways, onChildChange }) {
               <div className="flex flex-col items-center">
                 {runways.length > 0
                   ? formData?.map((runway, index) => (
-                      <div className="mx-4 mt-5 flex gap-14" key={runway.id}>
+                      <div
+                        className="mx-4 mt-5 flex gap-14 items-center"
+                        key={runway.id}
+                      >
                         <TextField
                           id="runwayCode"
                           name="runwayCode"
@@ -150,9 +161,21 @@ export default function EditRunway({ runways, onChildChange }) {
                           size="small"
                           label="Available Time"
                           variant="outlined"
-                          value={runway.availableTime}
-                          // onChange={(event) => handleInputChange(index, event)}
+                          value={
+                            runway.availableTime
+                              ? dayjs(runway.availableTime).format(
+                                  "HH:mm:ss - DD/MM/YYYY"
+                                )
+                              : ""
+                          }
                         />
+                        <IconButton
+                          color="primary"
+                          size="small"
+                          onClick={() => handleResetAvailableTime(runway.id)}
+                        >
+                          <i className="fa-solid fa-arrows-rotate"></i>
+                        </IconButton>
                         <FormControlLabel
                           className="flex flex-col"
                           control={

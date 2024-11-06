@@ -12,7 +12,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useEffect, useState } from "react";
 import AddAirport from "../Components/AddAirport";
-import DetailsAirport from "../Components/DetailsAirport";
 import Search from "../Components/Search";
 import UpdateFlightTime from "../Components/UpdateFlightTime";
 import {
@@ -169,13 +168,13 @@ export default function AirportManagement() {
                           id={airport.id}
                           name={airport.airportName}
                         />
-                        <DetailsAirport
+                        {/* <DetailsAirport
                           id={airport.id}
                           name={airport.airportName}
                           location={airport.location}
                           load={render}
                           onChildChange={handleChildChange}
-                        />
+                        /> */}
                       </>
                     ) : (
                       <UpdateFlightTime

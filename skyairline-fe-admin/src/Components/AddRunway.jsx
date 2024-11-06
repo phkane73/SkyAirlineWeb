@@ -123,7 +123,6 @@ export default function AddRunway({ onChildChange }) {
               label="Runway Type"
               onChange={handleInputChange}
             >
-              <MenuItem value={undefined}></MenuItem>
               <MenuItem value={"Take Off"}>Take Off</MenuItem>
               <MenuItem value={"Landing"}>Landing</MenuItem>
               <MenuItem value={"All"}>All</MenuItem>
@@ -140,7 +139,6 @@ export default function AddRunway({ onChildChange }) {
               onChange={handleInputChange}
             >
               {airports
-                // .filter((item) => item.isOperating === true)
                 .map((airport) => (
                   <MenuItem key={airport.id} value={airport.id}>
                     {airport.airportCode + " - " + airport.airportName}

@@ -91,7 +91,7 @@ const CreateSchedule = () => {
 
   return (
     <div className="p-3">
-      <h1 className="text-center text-3xl font-bold pb-2">TẠO LỊCH BAY</h1>
+      <h1 className="text-center text-3xl font-bold pb-2">CREATE SCHEDULE</h1>
       <div className="flex gap-2">
         <div className="basis-4/5">
           {loading ? (
@@ -279,7 +279,7 @@ const CreateSchedule = () => {
                 value={start}
                 disablePast
                 format="DD/MM/YYYY HH:mm"
-                label="Chọn ngày bắt đầu"
+                label="Start time schedule"
                 onChange={(newValue) => {
                   setMessage("");
                   setStart(newValue);
@@ -294,7 +294,7 @@ const CreateSchedule = () => {
                 value={end}
                 disablePast
                 format="DD/MM/YYYY HH:mm"
-                label="Chọn ngày kết thúc"
+                label="End time schedule"
                 onChange={(newValue) => {
                   setMessage("");
                   setEnd(newValue);

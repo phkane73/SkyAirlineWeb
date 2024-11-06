@@ -16,18 +16,18 @@ public class BookService extends BookServiceGrpc.BookServiceImplBase implements 
 
     @Override
     public void getBook(BookRequest request, StreamObserver<BookResponse> responseObserver) {
-        System.out.print("Received request0: " + request.getBookId());
+        System.out.print("Received request0: " + request);
         try {
             System.out.print("Received request: " + request.getBookId());
 
             // Kiểm tra xem request có hợp lệ không
-            if (request.getBookId() == null || request.getBookId().isEmpty()) {
-                // Nếu không hợp lệ, gửi lỗi về client
-                responseObserver.onError(Status.INVALID_ARGUMENT
-                        .withDescription("Book ID is required")
-                        .asRuntimeException());
-                return;
-            }
+//            if (request.getBookId() == null || request.getBookId().isEmpty()) {
+//                // Nếu không hợp lệ, gửi lỗi về client
+//                responseObserver.onError(Status.INVALID_ARGUMENT
+//                        .withDescription("Book ID is required")
+//                        .asRuntimeException());
+//                return;
+//            }
 
             // Xây dựng phản hồi
             BookResponse bookResponse = BookResponse.newBuilder()

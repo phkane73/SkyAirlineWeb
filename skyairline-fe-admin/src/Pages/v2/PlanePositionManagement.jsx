@@ -1,5 +1,7 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Pagination,
@@ -15,15 +17,19 @@ import TableRow from "@mui/material/TableRow";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import AddEditPlanePositionDrawer from "../../Components/AddEditPlanePositionDrawer";
+import AlertComponent from "../../Components/Alert";
 import MovePlaneDrawer from "../../Components/MovePlaneDrawer";
 import { getAllAirport } from "../../Services/v2/AirportServices";
-import { getAllPlanePosition } from "../../Services/v2/PlanePositionServices";
+import {
+  deletePlanesNoPosition,
+  getAllPlanePosition,
+} from "../../Services/v2/PlanePositionServices";
 import { getAllPlane } from "../../Services/v2/PlaneServices";
 export default function PlanePositionManagement() {
   const [listPlanePosition, setListPlanePosition] = useState([]);
   const [render, setRender] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [planes, setPlanes] = useState([]);
@@ -31,6 +37,8 @@ export default function PlanePositionManagement() {
   const [planeName, setPlaneName] = useState("");
   const [airportCode, setAirportCode] = useState("");
   const [takeOff, setTakeOff] = useState(undefined);
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [typeAlerts, setTypeAlerts] = React.useState({});
   useEffect(() => {
     async function fetchData() {
       const [listAirport, listPlane, response] = await Promise.all([
@@ -63,6 +71,30 @@ export default function PlanePositionManagement() {
     setPlaneName(event.target.value);
   };
 
+  const handleAlert = (code, message) => {
+    if (code === 200) {
+      setTypeAlerts({
+        code: "success",
+        message,
+      });
+      setAlertOpen(true);
+    } else {
+      setTypeAlerts({
+        code: "error",
+        message,
+      });
+      setAlertOpen(true);
+    }
+  };
+
+  const handleDeletePlanePosition = async (id) => {
+    const result = await deletePlanesNoPosition(id);
+    if (result) {
+      handleAlert(result.code, result.message);
+    }
+    setRender(!render);
+  };
+
   const handleSearchByAirport = (event) => {
     setAirportCode(event.target.value);
   };
@@ -79,6 +111,10 @@ export default function PlanePositionManagement() {
     setPage(value);
   };
 
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
   return (
     <div className="px-10 pt-3">
       <h1 className="text-center text-2xl font-bold uppercase">
@@ -91,6 +127,12 @@ export default function PlanePositionManagement() {
             onChildChange={handleChildChange}
           />
           <MovePlaneDrawer onChildChange={handleChildChange} />
+          <AlertComponent
+            open={alertOpen}
+            handleClose={handleAlertClose}
+            message={typeAlerts.message}
+            type={typeAlerts.code}
+          />
         </div>
         <div className="flex gap-3">
           <FormControl className="w-[230px]" size="small">
@@ -190,6 +232,7 @@ export default function PlanePositionManagement() {
                   textTransform: "uppercase",
                   cursor: "default",
                   fontSize: "16px",
+                  textAlign: "center",
                 }}
               >
                 Start Time
@@ -201,6 +244,7 @@ export default function PlanePositionManagement() {
                   textTransform: "uppercase",
                   cursor: "default",
                   fontSize: "16px",
+                  textAlign: "center",
                 }}
               >
                 End Time
@@ -227,6 +271,15 @@ export default function PlanePositionManagement() {
               >
                 Edit Action
               </TableCell>
+              <TableCell
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  textTransform: "uppercase",
+                  cursor: "default",
+                  fontSize: "16px",
+                }}
+              ></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -260,12 +313,12 @@ export default function PlanePositionManagement() {
                   <TableCell style={{ fontSize: "15px" }}>
                     {planePosition.airport.airportName}
                   </TableCell>
-                  <TableCell style={{ fontSize: "15px" }}>
+                  <TableCell style={{ fontSize: "15px", textAlign: "center" }}>
                     {dayjs(planePosition.startTime).format(
                       "HH:mm:ss - DD/MM/YYYY"
                     )}
                   </TableCell>
-                  <TableCell style={{ fontSize: "15px" }}>
+                  <TableCell style={{ fontSize: "15px", textAlign: "center" }}>
                     {planePosition.endTime
                       ? dayjs(planePosition.endTime).format(
                           "HH:mm:ss - DD/MM/YYYY"
@@ -280,6 +333,17 @@ export default function PlanePositionManagement() {
                       type={0}
                       takeOff={planePosition.thePlaneTookOff}
                     />
+                  </TableCell>
+                  <TableCell style={{ fontSize: "15px" }}>
+                    <IconButton
+                      aria-label="delete"
+                      size="small"
+                      onClick={() =>
+                        handleDeletePlanePosition(planePosition.id)
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               );

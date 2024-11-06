@@ -6,23 +6,25 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useEffect, useState } from "react";
-import AddEditAirportDrawer from "../../Components/AddEditAirportDrawer";
-import AddRunway from "../../Components/AddRunway";
-import EditRunway from "../../Components/EditRunway";
+import AddEditPlaneDrawer from "../../Components/AddEditPlaneDrawer";
 import Search from "../../Components/Search";
-import { getAllAirport } from "../../Services/v2/AirportServices";
-export default function AirportManagement() {
+import { getAllFlightRoute } from "../../Services/v2/FlightRouteServices";
+import { millisecondsToHoursAndMinutes } from "../../common/convertTime";
+import { formatCurrency } from "../../common/formatCurrency";
+import AddEditFlightRouteDrawer from "../../Components/AddEditFlightRouteDrawer";
+export default function FlightRouteManagement() {
   const [data, setData] = useState([]);
-  const [listAirport, setListAirport] = useState([]);
+  const [flightRoutes, setFlightRoutes] = useState([]);
   const [render, setRender] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getAllAirport();
+      const data = await getAllFlightRoute();
       if (data) {
-        const sortedData = data.sort((a, b) => b.id - a.id);
+        const sortedData = data.sort((a, b) => a.id - b.id);
+        console.log(data);
         setData(sortedData);
-        setListAirport(sortedData);
+        setFlightRoutes(sortedData);
       }
     }
     fetchData();
@@ -30,11 +32,11 @@ export default function AirportManagement() {
 
   const handleSearch = (query) => {
     const filteredDate = query
-      ? listAirport.filter((item) =>
-          item.airportCode.toLowerCase().includes(query.toLowerCase())
+      ? flightRoutes.filter((item) =>
+          item.planeName.toLowerCase().includes(query.toLowerCase())
         )
       : data;
-    setListAirport(filteredDate);
+    setFlightRoutes(filteredDate);
   };
 
   const handleChildChange = () => {
@@ -44,14 +46,11 @@ export default function AirportManagement() {
   return (
     <div className="px-10 pt-3">
       <h1 className="text-center text-2xl font-bold uppercase">
-        Airport Management
+        Flight Route Management
       </h1>
       <div className="flex justify-between items-center">
-        <div className="flex gap-4">
-          <AddEditAirportDrawer type={1} onChildChange={handleChildChange} />
-          <AddRunway onChildChange={handleChildChange}></AddRunway>
-        </div>
-        <Search text="Enter Airport Code for search" onSearch={handleSearch} />
+        <AddEditFlightRouteDrawer type={1} onChildChange={handleChildChange} />
+        <Search text="Enter plane name for search" onSearch={handleSearch} />
       </div>
       <TableContainer component={Paper} sx={{ maxHeight: 480, maxWidth: 1200 }}>
         <Table sx={{ maxWidth: 1200 }} stickyHeader aria-label="sticky table">
@@ -66,7 +65,7 @@ export default function AirportManagement() {
                   fontSize: "16px",
                 }}
               >
-                Airport Code
+                Id
               </TableCell>
               <TableCell
                 style={{
@@ -77,7 +76,7 @@ export default function AirportManagement() {
                   fontSize: "16px",
                 }}
               >
-                Location
+                Airport A
               </TableCell>
               <TableCell
                 style={{
@@ -88,7 +87,7 @@ export default function AirportManagement() {
                   fontSize: "16px",
                 }}
               >
-                Airport Name
+                Airport B
               </TableCell>
               <TableCell
                 style={{
@@ -99,7 +98,18 @@ export default function AirportManagement() {
                   fontSize: "16px",
                 }}
               >
-                Max Load
+                Flight Route Price
+              </TableCell>
+              <TableCell
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  textTransform: "uppercase",
+                  cursor: "default",
+                  fontSize: "16px",
+                }}
+              >
+                Flight Route Est.Time
               </TableCell>
               <TableCell
                 style={{
@@ -112,24 +122,15 @@ export default function AirportManagement() {
               >
                 Status
               </TableCell>
-              <TableCell
-                style={{
-                  backgroundColor: "black",
-                  color: "white",
-                  textTransform: "uppercase",
-                  cursor: "default",
-                  fontSize: "16px",
-                  textAlign: "center",
-                }}
-              >
-                Runway
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {listAirport?.map((airport) => {
+            {flightRoutes?.map((flightRoute) => {
+              const { minutes, hours } = millisecondsToHoursAndMinutes(
+                flightRoute.flightRouteEstTime
+              );
               let status;
-              if (airport.isOperating === false) {
+              if (flightRoute.isOperating === false) {
                 status = (
                   <TableCell style={{ fontSize: "15px" }}>
                     <span className="pr-5 text-red-600">
@@ -148,38 +149,34 @@ export default function AirportManagement() {
                   </TableCell>
                 );
               }
-              const { runways, ...initialValue } = airport;
               return (
-                <TableRow key={airport.id} style={{ cursor: "default" }}>
+                <TableRow key={flightRoute.id} style={{ cursor: "default" }}>
                   <TableCell style={{ fontSize: "15px" }}>
-                    <AddEditAirportDrawer 
-                      airport={initialValue}
+                    <AddEditFlightRouteDrawer
+                      flightRoute={flightRoute}
                       onChildChange={handleChildChange}
                     />
                   </TableCell>
                   <TableCell style={{ fontSize: "15px" }}>
-                    {airport.airportLocation}
+                    {flightRoute.arrivalAirport.airportCode}
                   </TableCell>
                   <TableCell style={{ fontSize: "15px" }}>
-                    {airport.airportName}
+                    {flightRoute.departureAirport.airportCode}
                   </TableCell>
                   <TableCell style={{ fontSize: "15px" }}>
-                    {airport.maxLoad}
+                    {formatCurrency(flightRoute.flightRoutePrice.toString())}
+                  </TableCell>
+                  <TableCell style={{ fontSize: "15px" }}>
+                    {`${hours}h ${minutes}min`}
                   </TableCell>
                   {status}
-                  <TableCell style={{ fontSize: "15px", textAlign: "center" }}>
-                    <EditRunway
-                      runways={airport.runways}
-                      onChildChange={handleChildChange}
-                    />
-                  </TableCell>
                 </TableRow>
               );
             })}
           </TableBody>
         </Table>
       </TableContainer>
-      <h4 className="mt-2">Total: {listAirport.length ?? 0}</h4>
+      <h4 className="mt-2">Total: {flightRoutes.length ?? 0}</h4>
     </div>
   );
 }

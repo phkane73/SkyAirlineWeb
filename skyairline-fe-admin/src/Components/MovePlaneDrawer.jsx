@@ -7,6 +7,9 @@ import { getAllAirport } from "../Services/v2/AirportServices";
 import { movePlane } from "../Services/v2/PlanePositionServices";
 import { getAllPlane } from "../Services/v2/PlaneServices";
 import AlertComponent from "./Alert";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 export default function MovePlaneDrawer({ onChildChange }) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({});
@@ -143,6 +146,24 @@ export default function MovePlaneDrawer({ onChildChange }) {
                 ))}
             </Select>
           </FormControl>
+          <LocalizationProvider
+            dateAdapter={AdapterDayjs}
+            style={{ padding: 0 }}
+          >
+            <DemoContainer components={["DateTimePicker"]}>
+              <DateTimePicker
+                disablePast
+                views={["year", "day", "hours", "minutes", "seconds"]}
+                name="start"
+                value={formData.takeOffTime}
+                format="DD/MM/YYYY HH:mm:ss"
+                label="Take Off Time"
+                onChange={(newValue) => {
+                  setFormData({ ...formData, takeOffTime: newValue });
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
           <Button variant="contained" type="submit">
             Move
           </Button>

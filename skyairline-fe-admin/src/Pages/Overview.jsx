@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ticketCount } from "../Services/TicketServices";
-import { userCount } from "../Services/UserServices";
-import { flightCount } from "../Services/ScheduleServices";
-import { airportCount } from "../Services/AirportServices";
 import {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
 } from "recharts";
 import { revenueMonths } from "../Services/RevenueService";
+import { flightCount } from "../Services/ScheduleServices";
+import { ticketCount } from "../Services/TicketServices";
+import { userCount } from "../Services/UserServices";
+import { getAllAirport } from "../Services/v2/AirportServices";
 
 const Overview = () => {
   const [countTicket, setCountTicket] = useState(0);
@@ -30,13 +30,13 @@ const Overview = () => {
       setCountUser(user);
       const flight = await flightCount();
       setCountFlight(flight);
-      const airport = await airportCount();
-      setCountAirport(airport);
+      const airport = await getAllAirport();
+      setCountAirport(airport.length);
       const result = await revenueMonths();
       setRevenue(result);
     }
     fetchData();
-  });
+  }, []);
 
   return (
     <div>

@@ -11,7 +11,16 @@ export const updatedRunway = async (runways) => {
 
 export const createRunway = async (runway) => {
   try {
-    const response = await API.post("/api/runway/create", {...runway});
+    const response = await API.post("/api/runway/create", { ...runway });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+export const resetAvailableTime = async (id) => {
+  try {
+    const response = await API.patch(`/api/runway/reset/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

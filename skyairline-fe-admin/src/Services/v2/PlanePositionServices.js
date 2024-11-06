@@ -20,6 +20,16 @@ export const getPlanesNoPosition = async () => {
   }
 };
 
+
+export const deletePlanesNoPosition = async (id) => {
+  try {
+    const response = await API.delete(`/api/plane-position/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
 export const addPlanePosition = async (planePosition) => {
   try {
     const response = await API.post("/api/plane-position/create", {

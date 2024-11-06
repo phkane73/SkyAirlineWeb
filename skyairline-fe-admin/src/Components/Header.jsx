@@ -17,7 +17,7 @@ const Header = () => {
         </Link>
         <div className="flex items-center gap-3 ">
           <i className="fa-solid fa-user-tie"></i>
-          <h1>Quản trị viên</h1>
+          <h1>Admin Page</h1>
           <Link to="/" onClick={handleLogout}>
             <span className="text-xl">
               <i className="fa-solid fa-arrow-right-from-bracket"></i>

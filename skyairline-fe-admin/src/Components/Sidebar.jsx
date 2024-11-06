@@ -13,7 +13,7 @@ const Sidebar = () => {
     setAnchorEl(null);
   };
   return (
-    <div className="bg-[#2D7690] min-h-[620px] pt-4">
+    <div className="bg-[#2D7690] max-h-[620px] pt-4 overflow-y-auto custom-scrollbar">
       <div className="sidebar_body">
         <Button
           style={{
@@ -104,6 +104,42 @@ const Sidebar = () => {
         >
           <i className="fa-solid fa-inbox"></i>
           <h1 className="pl-4">Airport</h1>
+        </Button>
+        <Button
+          style={{
+            color: "white",
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "flex-start",
+            fontSize: "18px",
+            fontWeight: "bold",
+            padding: "15px 10px 15px 10px",
+          }}
+          variant="elevated"
+          component={Link}
+          to="/flightRoute"
+        >
+          <i className="fa-solid fa-route"></i>
+          <h1 className="pl-4">Flight Route</h1>
+        </Button>
+        <Button
+          style={{
+            color: "white",
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "flex-start",
+            fontSize: "18px",
+            fontWeight: "bold",
+            padding: "15px 10px 15px 10px",
+          }}
+          variant="elevated"
+          component={Link}
+          to="/flightSchedule"
+        >
+          <i className="fa-solid fa-route"></i>
+          <h1 className="pl-4">Flight Schedule</h1>
         </Button>
         <Button
           style={{

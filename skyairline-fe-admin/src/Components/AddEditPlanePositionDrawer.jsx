@@ -63,6 +63,14 @@ export default function AddEditPlanePositionDrawer({
     if (type === 1 && !newOpen) {
       setFormData({});
     }
+    if (planePosition) {
+      setFormData({
+        id: planePosition.id,
+        airportId: planePosition.airport.id,
+        planeId: planePosition.plane.id,
+        startTime: dayjs(planePosition.startTime),
+      });
+    }
     setOpen(newOpen);
   };
 
@@ -194,11 +202,12 @@ export default function AddEditPlanePositionDrawer({
           >
             <DemoContainer components={["DateTimePicker"]}>
               <DateTimePicker
+                disablePast
                 views={["year", "day", "hours", "minutes", "seconds"]}
                 name="start"
                 value={formData.startTime}
                 format="DD/MM/YYYY HH:mm:ss"
-                label="Chọn ngày bắt đầu"
+                label="Start Time"
                 onChange={(newValue) => {
                   setFormData({ ...formData, startTime: newValue });
                 }}

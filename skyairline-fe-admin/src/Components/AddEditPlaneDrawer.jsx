@@ -16,6 +16,7 @@ export default function AddEditPlaneDrawer({ plane, type, onChildChange }) {
     if (type === 1 && !newOpen) {
       setFormData({});
     }
+    setFormData({ ...plane });
     setOpen(newOpen);
   };
 

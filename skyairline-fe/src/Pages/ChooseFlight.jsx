@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import FlightLandIcon from "@mui/icons-material/FlightLand";
-import { findFlight } from "../Services/FlightServices";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import FlightLandIcon from "@mui/icons-material/FlightLand";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
+import CircularProgress from "@mui/joy/CircularProgress";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import CircularProgress from "@mui/joy/CircularProgress";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFlights } from "../Redux/reducers/SessionReducer";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setFlights } from "../Redux/reducers/SessionReducer";
+import { findFlights } from "../Services/v2/FlightServices";
 const style = {
   position: "absolute",
   top: "50%",
@@ -46,27 +46,39 @@ const ChooseFlight = ({ onChangeStep }) => {
     setOpenClassic(true);
   };
   const handleCloseClassic = () => setOpenClassic(false);
-  const { departure, arrival, date } = useParams();
-  const [listFlight, setListFlight] = useState([]);
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [listFlight, setListFlight] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [price, setPrice] = useState(true);
   var businessPrice = 0;
   var deluxePrice = 0;
   var classicPrice = 0;
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const data = await findFlight(
+  //       departure,
+  //       arrival,
+  //       dayjs(date).format("YYYY-MM-DD HH:mm")
+  //     );
+  //     if (data) {
+  //       setLoading(false);
+  //       dispatch(setFlights({ data }));
+  //     }
+  //   }
+  //   fetchData();
+  // }, [departure, arrival, date, dispatch]);
+
   useEffect(() => {
     async function fetchData() {
-      const data = await findFlight(
-        departure,
-        arrival,
-        dayjs(date).format("YYYY-MM-DD HH:mm")
-      );
-      if (data) {
-        setLoading(false);
-        dispatch(setFlights({ data }));
-      }
+      const { data, price } = await findFlights(id);
+      const dataSorted = data.sort((a, b) => a.id - b.id);
+      setLoading(false);
+      setPrice(+price);
+      dispatch(setFlights({ data: dataSorted }));
     }
     fetchData();
-  }, [departure, arrival, date, dispatch]);
+  }, [dispatch]);
 
   const store = useSelector((state) => state.Session.flights.data);
   const auth = useSelector((state) => state.Auth.token);
@@ -132,12 +144,7 @@ const ChooseFlight = ({ onChangeStep }) => {
         ) : (
           <>
             <div className="flex justify-center mb-10">
-              <div className="h-[80px] bg-gray-400/30 rounded-md w-2/3 flex items-center gap-6 justify-center">
-                <span className="font-bold text-2xl text-[#2D7690]">
-                  {listFlight.length > 0
-                    ? listFlight[0].departureAirport.location
-                    : ""}
-                </span>
+              <div className="h-[80px] bg-gray-400/30 rounded-md w-2/5 flex items-center justify-center">
                 <div className="flex gap-2 text-2xl">
                   <FlightTakeoffIcon />
                   <HorizontalRuleIcon />
@@ -162,11 +169,6 @@ const ChooseFlight = ({ onChangeStep }) => {
                   <HorizontalRuleIcon />
                   <FlightLandIcon />
                 </div>
-                <span className="font-bold text-2xl text-[#2D7690]">
-                  {listFlight.length > 0
-                    ? listFlight[0].arrivalAirport.location
-                    : ""}
-                </span>
               </div>
             </div>
             <div className="flex flex-col items-center gap-10">
@@ -180,26 +182,30 @@ const ChooseFlight = ({ onChangeStep }) => {
                     key={flight.id}
                   >
                     <div className="w-1/2 h-[100%] flex flex-col items-center justify-center gap-1 text-gray-200">
-                      <span>Mã chuyến bay: {flight.flightCode}</span>
-                      <span>Máy bay: {flight.planeName}</span>
+                      <span>Flight Code: {flight.flightCode}</span>
+                      <span>Plane: {flight.plane.planeName}</span>
                       {/* <span>Còn 8 ghế</span> */}
                       <div className="flex gap-1">
                         <div className="flex flex-col items-center">
                           <span className="text-xl">
-                            {dayjs(flight.departureTime).format("HH:mm")}
+                            {dayjs(flight.departureTime).format(
+                              "DD/MM/YYYY HH:mm"
+                            )}
                           </span>
                           <span>{flight.departureAirport.airportName}</span>
                         </div>
                         <i className="fa-solid fa-arrow-right text-xl"></i>
                         <div className="flex flex-col items-center">
                           <span className="text-xl">
-                            {dayjs(flight.arrivalTime).format("HH:mm")}
+                            {dayjs(flight.arrivalTime).format(
+                              "DD/MM/YYYY HH:mm"
+                            )}
                           </span>
                           <span>{flight.arrivalAirport.airportName}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="w-1/2 flex gap-1">
+                    {/* <div className="w-1/2 flex gap-1">
                       <div className="w-1/3 bg-white rounded-md flex flex-col">
                         <Link
                           to={`/booking/validinformation/${flight.id}/${1}`}
@@ -329,7 +335,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                           Chi tiết
                         </button>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 );
               })}
