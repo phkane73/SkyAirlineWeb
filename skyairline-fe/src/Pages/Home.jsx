@@ -5,6 +5,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Carousel from "../Components/Carousel";
 import { removeSession } from "../Redux/reducers/SessionReducer";
 import { getAllOperatingAirport } from "../Services/v2/AirportServices";
-import dayjs from "dayjs";
-import { checkFlightIsExist, getPriceOfFlight } from "../Services/v2/FlightServices";
+import { checkFlightIsExist } from "../Services/v2/FlightServices";
 const Home = () => {
   const [listAirportDeparture, setListAirportDeparture] = useState([]);
   const [listAirportArrival, setListAirportArrival] = useState([]);
@@ -28,8 +28,6 @@ const Home = () => {
   useEffect(() => {
     async function fetchData() {
       const data = await getAllOperatingAirport();
-      // console.log(result);
-      // const data = await getAllAirportOperation();
       setListAirportDeparture(data);
       setListAirportArrival(data);
       dispatch(removeSession(token));

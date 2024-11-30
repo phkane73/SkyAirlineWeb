@@ -70,7 +70,6 @@ export default function AddEditAirportDrawer({ airport, type, onChildChange }) {
         maxLoad: parseInt(formData.maxLoad, 10),
         airportCode: formData.airportCode.toUpperCase(),
       });
-      console.log(formData);
       if (res.code === 200) {
         onChildChange();
       }

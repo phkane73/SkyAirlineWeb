@@ -106,7 +106,6 @@ export default function AddEditFlightRouteDrawer({
     const validate = Object.values(formData).some(
       (value) => value === undefined || value === null || value === ""
     );
-    console.log(Object.values(formData).length);
     if (validate || Object.values(formData).length < 6) {
       setTypeAlerts({
         code: "error",

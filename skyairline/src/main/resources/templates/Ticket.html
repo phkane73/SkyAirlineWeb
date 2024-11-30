@@ -27,18 +27,6 @@
             <div>Name: </div>
             <div style="margin-left: auto" th:text="${name}"></div>
         </div>
-        <div style="display: flex;">
-            <div>
-                <h3 th:text="${departure}"></h3>
-                <h4 style="text-align: center" th:text="${departureTime}"></h4>
-            </div>
-            <img src="https://res.cloudinary.com/dzfwvoijo/image/upload/v1711789894/logo/black-plane_a5mnh6.png" alt=""
-                 style="width: 25px; height: 25px; margin: 40px auto 0 auto">
-            <div style="margin-left: auto">
-                <h3 th:text="${arrival}"></h3>
-                <h4 style="text-align: center" th:text="${arrivalTime}"></h4>
-            </div>
-        </div>
         <div style="border: 1px black dashed"></div>
         <h4>Note: The boarding gate will close 15 minutes before departure time. You will be rejected when the gate
             is closed!</h4>

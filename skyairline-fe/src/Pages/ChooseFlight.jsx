@@ -12,6 +12,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { setFlights } from "../Redux/reducers/SessionReducer";
+import { getSeatDetailByFlightIds } from "../Services/SeatServices";
 import { findFlights } from "../Services/v2/FlightServices";
 const style = {
   position: "absolute",
@@ -51,6 +52,7 @@ const ChooseFlight = ({ onChangeStep }) => {
   const [listFlight, setListFlight] = useState([]);
   const [loading, setLoading] = useState(true);
   const [price, setPrice] = useState(true);
+  const [listSeatDetail, setListSeatDetail] = useState([]);
   var businessPrice = 0;
   var deluxePrice = 0;
   var classicPrice = 0;
@@ -72,13 +74,18 @@ const ChooseFlight = ({ onChangeStep }) => {
   useEffect(() => {
     async function fetchData() {
       const { data, price } = await findFlights(id);
-      const dataSorted = data.sort((a, b) => a.id - b.id);
-      setLoading(false);
-      setPrice(+price);
-      dispatch(setFlights({ data: dataSorted }));
+      if (data) {
+        const ids = data.map((item) => item.id);
+        const seatDetails = await getSeatDetailByFlightIds(ids);
+        setListSeatDetail(seatDetails);
+        const dataSorted = data.sort((a, b) => a.id - b.id);
+        setLoading(false);
+        setPrice(+price);
+        dispatch(setFlights({ data: dataSorted }));
+      }
     }
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   const store = useSelector((state) => state.Session.flights.data);
   const auth = useSelector((state) => state.Auth.token);
@@ -205,7 +212,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                         </div>
                       </div>
                     </div>
-                    {/* <div className="w-1/2 flex gap-1">
+                    <div className="w-1/2 flex gap-1">
                       <div className="w-1/3 bg-white rounded-md flex flex-col">
                         <Link
                           to={`/booking/validinformation/${flight.id}/${1}`}
@@ -218,19 +225,22 @@ const ChooseFlight = ({ onChangeStep }) => {
                             </h1>
                             <div className="flex flex-col items-center mt-[10px]">
                               <span className="text-xl text-black">
-                                {flight.seatDetails.map((f) => {
-                                  if (
-                                    f.seat.ticketClass.className === "BUSINESS"
-                                  ) {
-                                    businessPrice =
-                                      f.seat.ticketClass.ticketClassPrice +
-                                      flight.price;
-                                    if (f.status === "AVAILABLE") {
-                                      countBusiness++;
+                                {listSeatDetail
+                                  .filter((item) => item.flightId === flight.id)
+                                  .map((f) => {
+                                    if (
+                                      f.seat.ticketClass.className ===
+                                      "BUSINESS"
+                                    ) {
+                                      businessPrice =
+                                        f.seat.ticketClass.ticketClassPrice +
+                                        price;
+                                      if (f.status === "AVAILABLE") {
+                                        countBusiness++;
+                                      }
                                     }
-                                  }
-                                  return "";
-                                })}
+                                    return "";
+                                  })}
                                 {new Intl.NumberFormat()
                                   .format(businessPrice)
                                   .replaceAll(",", ",")}
@@ -259,21 +269,23 @@ const ChooseFlight = ({ onChangeStep }) => {
                             <h1 className="text-center leading-[50px] uppercase font-bold text-xl">
                               Deluxe
                             </h1>
-                            <div className="flex flex-col items-center mt-[20px]">
+                            <div className="flex flex-col items-center mt-[10px]">
                               <span className="text-xl text-black">
-                                {flight.seatDetails.map((f) => {
-                                  if (
-                                    f.seat.ticketClass.className === "DELUXE"
-                                  ) {
-                                    deluxePrice =
-                                      f.seat.ticketClass.ticketClassPrice +
-                                      flight.price;
-                                    if (f.status === "AVAILABLE") {
-                                      countDeluxe++;
+                                {listSeatDetail
+                                  .filter((item) => item.flightId === flight.id)
+                                  .map((f) => {
+                                    if (
+                                      f.seat.ticketClass.className === "DELUXE"
+                                    ) {
+                                      deluxePrice =
+                                        f.seat.ticketClass.ticketClassPrice +
+                                        price;
+                                      if (f.status === "AVAILABLE") {
+                                        countDeluxe++;
+                                      }
                                     }
-                                  }
-                                  return "";
-                                })}
+                                    return "";
+                                  })}
                                 {new Intl.NumberFormat()
                                   .format(deluxePrice)
                                   .replaceAll(",", ",")}
@@ -302,21 +314,23 @@ const ChooseFlight = ({ onChangeStep }) => {
                             <h1 className="text-center leading-[50px] uppercase font-bold text-xl">
                               Classic
                             </h1>
-                            <div className="flex flex-col items-center mt-[20px]">
+                            <div className="flex flex-col items-center mt-[10px]">
                               <span className="text-xl text-black">
-                                {flight.seatDetails.map((f) => {
-                                  if (
-                                    f.seat.ticketClass.className === "CLASSIC"
-                                  ) {
-                                    classicPrice =
-                                      f.seat.ticketClass.ticketClassPrice +
-                                      flight.price;
-                                    if (f.status === "AVAILABLE") {
-                                      countClassic++;
+                                {listSeatDetail
+                                  .filter((item) => item.flightId === flight.id)
+                                  .map((f) => {
+                                    if (
+                                      f.seat.ticketClass.className === "CLASSIC"
+                                    ) {
+                                      classicPrice =
+                                        f.seat.ticketClass.ticketClassPrice +
+                                        price;
+                                      if (f.status === "AVAILABLE") {
+                                        countClassic++;
+                                      }
                                     }
-                                  }
-                                  return "";
-                                })}
+                                    return "";
+                                  })}
                                 {new Intl.NumberFormat()
                                   .format(classicPrice)
                                   .replaceAll(",", ",")}
@@ -335,7 +349,7 @@ const ChooseFlight = ({ onChangeStep }) => {
                           Chi tiết
                         </button>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 );
               })}

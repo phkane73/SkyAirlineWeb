@@ -132,7 +132,7 @@ function Seat(props) {
   const SeatBooked = function () {
     if (props.status === "AVAILABLE" && ticketClass.className === props.class) {
       if (Object.keys(s).length === 0) {
-        bookingSeat(props.id, props.idSchedule, token);
+        bookingSeat(props.id, props.idFlight, token);
         dispatch(
           setSeat({
             seatCode: props.code,
@@ -144,7 +144,7 @@ function Seat(props) {
       }
     }
     if (props.status === "BOOKING" && ticketClass.className === props.class) {
-      cancelSeat(props.id, props.idSchedule, token);
+      cancelSeat(props.id, props.idFlight, token);
       dispatch(removeSeat(token));
     }
   };

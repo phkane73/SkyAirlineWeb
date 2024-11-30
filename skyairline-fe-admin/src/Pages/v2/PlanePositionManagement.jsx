@@ -58,10 +58,12 @@ export default function PlanePositionManagement() {
         setListPlanePosition(response.data);
       }
       if (listPlane) {
-        setPlanes(listPlane);
+        const sortedPlanes = listPlane.sort((a, b) => b.id - a.id);
+        setPlanes(sortedPlanes);
       }
       if (listAirport) {
-        setAirports(listAirport);
+        const sortedAirports = listAirport.sort((a, b) => b.id - a.id);
+        setAirports(sortedAirports);
       }
     }
     fetchData();

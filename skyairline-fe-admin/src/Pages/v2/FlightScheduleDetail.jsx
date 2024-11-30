@@ -10,11 +10,11 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AlertComponent from "../../Components/Alert";
+import { checkApprove } from "../../Services/v2/FlightScheduleServices";
 import {
   approveFlightSchedule,
-  checkApprove,
-} from "../../Services/v2/FlightScheduleServices";
-import { getAllFlightByFlightScheduleId } from "../../Services/v2/FlightServices";
+  getAllFlightByFlightScheduleId,
+} from "../../Services/v2/FlightServices";
 export default function FlightScheduleDetail() {
   const [data, setData] = useState([]);
   const [flights, setFlights] = useState([]);
@@ -96,7 +96,7 @@ export default function FlightScheduleDetail() {
             className="!bg-[#2D7690]"
             onClick={() => handleApprove()}
           >
-            Approved
+            Approve
           </Button>
         )}
       </div>

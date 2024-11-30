@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import { useNavigate, useParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import TextField from "@mui/material/TextField";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { getInfo, confirmInformation } from "../Services/UserServices";
-import FormHelperText from "@mui/material/FormHelperText";
-import Menu from "@mui/material/Menu";
-import ListItemText from "@mui/material/ListItemText";
-import { getFlight, getClass } from "../Services/FlightServices";
 import CircularProgress from "@mui/joy/CircularProgress";
+import FormHelperText from "@mui/material/FormHelperText";
+import ListItemText from "@mui/material/ListItemText";
+import Menu from "@mui/material/Menu";
+import TextField from "@mui/material/TextField";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import {
+  setFlight,
   setTicketClass,
   setTotalPrice,
-  setFlight,
 } from "../Redux/reducers/SessionReducer";
+import { getClass } from "../Services/FlightServices";
+import { confirmInformation, getInfo } from "../Services/UserServices";
+import { getFlightById } from "../Services/v2/FlightServices";
 
 const ValidInformation = ({ onChangeStep }) => {
   onChangeStep(1);
@@ -41,13 +42,14 @@ const ValidInformation = ({ onChangeStep }) => {
   const [flight, setF] = useState({});
   const [tClass, setTClass] = useState({});
   const [loading, setLoading] = useState(true);
+  const [pr, setPr] = useState(0);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     phoneNumber: "",
   });
   const fee = 584000;
-  const [price, setPrice] = useState(0);
+  const [total, setTotal] = useState(0);
 
   const store = useSelector((state) => state.Session);
   const auth = useSelector((state) => state.Auth.token);
@@ -63,12 +65,13 @@ const ValidInformation = ({ onChangeStep }) => {
           });
           data.birthday ? setBirthday(dayjs(data.birthday)) : setBirthday(null);
         }
-        const f = await getFlight(id);
+        const { flight, price } = await getFlightById(id);
         const c = await getClass(idClass);
-        if (c && f) {
-          dispatch(setFlight(f));
+        if (c && flight) {
+          setPr(price);
+          dispatch(setFlight(flight));
           dispatch(setTicketClass(c));
-          dispatch(setTotalPrice(f.price + c.ticketClassPrice + fee));
+          dispatch(setTotalPrice(+price + c.ticketClassPrice + fee));
           setLoading(false);
         }
       }
@@ -79,7 +82,7 @@ const ValidInformation = ({ onChangeStep }) => {
   useEffect(() => {
     if (store) {
       setF(store.flight);
-      setPrice(store.totalPrice);
+      setTotal(store.totalPrice);
       setTClass(store.ticketClass);
     }
   }, [store]);
@@ -237,9 +240,9 @@ const ValidInformation = ({ onChangeStep }) => {
                   <div className="py-2 px-1 bg-white mt-4 mb-4">
                     <h1 className="text-xl font-bold">
                       {Object.keys(flight).length > 0
-                        ? flight.departureAirport.location +
+                        ? flight.departureAirport.airportLocation +
                           " -> " +
-                          flight.arrivalAirport.location
+                          flight.arrivalAirport.airportLocation
                         : ""}
                     </h1>
                     <h2>
@@ -256,7 +259,7 @@ const ValidInformation = ({ onChangeStep }) => {
                     <h1>Giá vé</h1>
                     <h1>
                       {new Intl.NumberFormat()
-                        .format(flight.price + tClass.ticketClassPrice)
+                        .format(+pr + tClass.ticketClassPrice)
                         .replaceAll(",", ",")}
                       VND
                     </h1>
@@ -332,7 +335,7 @@ const ValidInformation = ({ onChangeStep }) => {
                 <div className="mt-7 text-xl text-white font-bold uppercase p-3 bg-[#2D7690] w-[100%] flex justify-between">
                   <h1>Tổng tiền</h1>
                   <h1>
-                    {new Intl.NumberFormat().format(price).replaceAll(",", ",")}
+                    {new Intl.NumberFormat().format(total).replaceAll(",", ",")}
                     VND
                   </h1>
                 </div>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getInfo } from "../Services/UserServices";
-import { useDispatch, useSelector } from "react-redux";
-import { removeToken } from "../Redux/reducers/AuthReducer";
-import { removeSession } from "../Redux/reducers/SessionReducer";
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket";
 import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { removeToken } from "../Redux/reducers/AuthReducer";
+import { removeSession } from "../Redux/reducers/SessionReducer";
+import { getInfo } from "../Services/UserServices";
 const Header = () => {
   const [username, setUsername] = useState("");
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const Header = () => {
   return (
     <div>
       <div className="container mx-auto flex gap-7">
-        <div className="logo h-[110px] w-1/4 flex">
+        <div className="logo h-[102px] w-1/4 flex">
           <Link to="/">
             <img
               src="/../../Assets/images/logo.jpg"

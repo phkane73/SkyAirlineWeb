@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import dayjs from "dayjs";
-import { useDispatch, useSelector } from "react-redux";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useNavigate } from "react-router-dom";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
 import ListItemText from "@mui/material/ListItemText";
-import Seat from "../Components/Seat";
 import Menu from "@mui/material/Menu";
-import { removeSeat, setFlight } from "../Redux/reducers/SessionReducer";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import Seat from "../Components/Seat";
+import { removeSeat } from "../Redux/reducers/SessionReducer";
+import { getSeatDetailByFlightId } from "../Services/SeatServices";
 const ChooseSeat = ({ onChangeStep }) => {
   onChangeStep(2);
   const fee = 584000;
@@ -41,36 +42,46 @@ const ChooseSeat = ({ onChangeStep }) => {
   const tk = useSelector((state) => state.Auth.token);
   const seat = useSelector((state) => state.Session.seat);
   useEffect(() => {
-    setF(store.flight);
-    setTClass(store.ticketClass);
-    setPrice(store.totalPrice);
-    setSeats(store.flight.seatDetails);
-  }, [store, seats]);
+    async function fetchData() {
+      const seatDetails = await getSeatDetailByFlightId(store.flight.id);
+      setF(store.flight);
+      setTClass(store.ticketClass);
+      setPrice(store.totalPrice);
+      setSeats(seatDetails);
+    }
+    fetchData();
+  }, [store, seat]);
 
   useEffect(() => {
-    const seatsCopy = [...seats];
-    seatsCopy.sort((a, b) => a.id.seat_id - b.id.seat_id);
-    let row = [];
-    for (let i = 0; i < seatsCopy.length; i += 6) {
-      row.push(seatsCopy.slice(i, i + 6));
+    async function fetchData() {
+      const seatsCopy = [...seats];
+      seatsCopy.sort((a, b) => a.seat.id - b.seat.id);
+      let row = [];
+      for (let i = 0; i < seatsCopy.length; i += 6) {
+        row.push(seatsCopy.slice(i, i + 6));
+      }
+      setRows(row);
     }
-    setRows(row);
+    fetchData();
   }, [seats]);
 
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/seatTopic");
-    const stompClient = Stomp.over(socket);
+    async function fetchData() {
+      const socket = new SockJS("http://localhost:8080/seatTopic");
+      const stompClient = Stomp.over(socket);
 
-    const connectAndSubscribe = () => {
-      stompClient.connect({}, (frame) => {
-        console.log("Connected: " + frame);
-        stompClient.subscribe("/topic/seatTopic", (response) => {
-          dispatch(setFlight(JSON.parse(response.body)));
+      const connectAndSubscribe = () => {
+        stompClient.connect({}, (frame) => {
+          console.log("Connected: " + frame);
+          stompClient.subscribe("/topic/seatTopic", (response) => {
+            setSeats(JSON.parse(response.body));
+          });
         });
-      });
-    };
-    connectAndSubscribe();
-  }, [dispatch]);
+      };
+      connectAndSubscribe();
+    }
+    fetchData();
+  }, [seats]);
 
   const handlePayment = (e) => {
     e.preventDefault();
@@ -178,8 +189,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                       <Seat
                                         status={seat.status}
                                         class={seat.seat.ticketClass.className}
-                                        id={seat.id.seat_id}
-                                        idSchedule={seat.id.flight_schedule_id}
+                                        id={seat.seat.id}
+                                        idFlight={flight.id}
                                         idUser={seat.userBookingSeat}
                                         code={seat.seat.seatCode}
                                       ></Seat>
@@ -197,8 +208,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                       <Seat
                                         status={seat.status}
                                         class={seat.seat.ticketClass.className}
-                                        id={seat.id.seat_id}
-                                        idSchedule={seat.id.flight_schedule_id}
+                                        id={seat.seat.id}
+                                        idFlight={flight.id}
                                         idUser={seat.userBookingSeat}
                                         code={seat.seat.seatCode}
                                       ></Seat>
@@ -224,8 +235,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                       <Seat
                                         status={seat.status}
                                         class={seat.seat.ticketClass.className}
-                                        id={seat.id.seat_id}
-                                        idSchedule={seat.id.flight_schedule_id}
+                                        id={seat.seat.id}
+                                        idFlight={flight.id}
                                         idUser={seat.userBookingSeat}
                                         code={seat.seat.seatCode}
                                       ></Seat>
@@ -243,8 +254,8 @@ const ChooseSeat = ({ onChangeStep }) => {
                                       <Seat
                                         status={seat.status}
                                         class={seat.seat.ticketClass.className}
-                                        id={seat.id.seat_id}
-                                        idSchedule={seat.id.flight_schedule_id}
+                                        id={seat.seat.id}
+                                        idFlight={flight.id}
                                         idUser={seat.userBookingSeat}
                                         code={seat.seat.seatCode}
                                       ></Seat>
@@ -274,9 +285,9 @@ const ChooseSeat = ({ onChangeStep }) => {
                   <div className="py-2 px-1 bg-white mt-4 mb-4">
                     <h1 className="text-xl font-bold">
                       {Object.keys(flight).length > 0
-                        ? flight.departureAirport.location +
+                        ? flight.departureAirport.airportLocation +
                           " -> " +
-                          flight.arrivalAirport.location
+                          flight.arrivalAirport.airportLocation
                         : ""}
                     </h1>
                     <h2>
@@ -291,7 +302,7 @@ const ChooseSeat = ({ onChangeStep }) => {
                     <h1>Giá vé</h1>
                     <h1>
                       {new Intl.NumberFormat()
-                        .format(flight.price + tClass.ticketClassPrice)
+                        .format(+price - fee)
                         .replaceAll(",", ",")}
                       VND
                     </h1>

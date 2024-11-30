@@ -47,13 +47,16 @@ export default function AddEditPlanePositionDrawer({
         getAllAirport(),
       ]);
       if (planeList) {
-        setPlanes(planeList);
+        const sortedPlaneList = planeList.sort((a, b) => b.id - a.id);
+        setPlanes(sortedPlaneList);
       }
       if (airportList) {
-        setAirports(airportList);
+        const sortedAirports = airportList.sort((a, b) => b.id - a.id);
+        setAirports(sortedAirports);
       }
       if (allPlane) {
-        setAllPlanes(allPlane);
+        const sortedAllPlane = allPlane.sort((a, b) => b.id - a.id);
+        setAllPlanes(sortedAllPlane);
       }
     }
     fetchData();

@@ -15,13 +15,19 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Table(name = "seat_detail")
 public class SeatDetail implements Serializable {
-    @EmbeddedId
-    private FlightSeatKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "seat_detail_id")
+    private Integer id;
+
+    private long flightId;
+
+
     private SeatStatus status;
 
     @ManyToOne
-    @MapsId("seat_id")
-    @JoinColumn(name = "seat_id")
+    @JoinColumn(name = "seat_id", referencedColumnName = "seat_id")
     private Seat seat;
+
     private int userBookingSeat;
 }

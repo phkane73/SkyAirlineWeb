@@ -25,14 +25,11 @@ public class Ticket implements Serializable {
     private float ticketPrice;
     private String qRCode;
     private Boolean checkRevenue;
+    private Long idFlight;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "flight_id")
-    private FlightSchedule flightSchedule;
 
     @ManyToOne
     @JoinColumn(name = "seat_id")

@@ -6,12 +6,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useEffect, useState } from "react";
-import AddEditPlaneDrawer from "../../Components/AddEditPlaneDrawer";
-import Search from "../../Components/Search";
-import { getAllFlightRoute } from "../../Services/v2/FlightRouteServices";
 import { millisecondsToHoursAndMinutes } from "../../common/convertTime";
 import { formatCurrency } from "../../common/formatCurrency";
 import AddEditFlightRouteDrawer from "../../Components/AddEditFlightRouteDrawer";
+import  Search  from "../../Components/Search";
+import { getAllFlightRoute } from "../../Services/v2/FlightRouteServices";
 export default function FlightRouteManagement() {
   const [data, setData] = useState([]);
   const [flightRoutes, setFlightRoutes] = useState([]);
@@ -22,7 +21,6 @@ export default function FlightRouteManagement() {
       const data = await getAllFlightRoute();
       if (data) {
         const sortedData = data.sort((a, b) => a.id - b.id);
-        console.log(data);
         setData(sortedData);
         setFlightRoutes(sortedData);
       }
@@ -32,8 +30,14 @@ export default function FlightRouteManagement() {
 
   const handleSearch = (query) => {
     const filteredDate = query
-      ? flightRoutes.filter((item) =>
-          item.planeName.toLowerCase().includes(query.toLowerCase())
+      ? flightRoutes.filter(
+          (item) =>
+            item.arrivalAirport.airportCode
+              .toLowerCase()
+              .includes(query.toLowerCase()) ||
+            item.departureAirport.airportCode
+              .toLowerCase()
+              .includes(query.toLowerCase())
         )
       : data;
     setFlightRoutes(filteredDate);
@@ -50,7 +54,7 @@ export default function FlightRouteManagement() {
       </h1>
       <div className="flex justify-between items-center">
         <AddEditFlightRouteDrawer type={1} onChildChange={handleChildChange} />
-        <Search text="Enter plane name for search" onSearch={handleSearch} />
+        <Search text="Enter airport code for search" onSearch={handleSearch} />
       </div>
       <TableContainer component={Paper} sx={{ maxHeight: 480, maxWidth: 1200 }}>
         <Table sx={{ maxWidth: 1200 }} stickyHeader aria-label="sticky table">

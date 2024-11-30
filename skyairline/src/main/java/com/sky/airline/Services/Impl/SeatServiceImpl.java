@@ -14,6 +14,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -21,8 +22,6 @@ import java.util.Set;
 public class SeatServiceImpl implements ISeatService {
 
     private final ISeatDetailRepository seatDetailRepository;
-
-    private final IFlightScheduleService flightScheduleService;
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -33,29 +32,28 @@ public class SeatServiceImpl implements ISeatService {
     private final ISeatRepository seatRepository;
 
     @Override
-    public void bookingSeat(int idSeat, long idSchedule, String token) {
+    public void bookingSeat(int idSeat, long idFlight, String token) {
         String email = new JwtTokenProvider().getUserIdFromJWT(token);
         User user = iUserService.getUserByEmail(email);
-        FlightSchedule flightSchedule = flightScheduleService.getFlightById(idSchedule);
-        Set<SeatDetail> SeatDetails = flightSchedule.getSeatDetails();
+        List<SeatDetail> SeatDetails = this.getSeatDetailById(idFlight);
         for (SeatDetail s : SeatDetails) {
-            if (s.getId().getSeat_id() == idSeat) {
+            if (s.getSeat().getId() == idSeat) {
+                s.setFlightId(idFlight);
                 s.setUserBookingSeat(user.getId());
                 s.setStatus(SeatStatus.BOOKING);
                 seatDetailRepository.save(s);
             }
         }
-        producerService.setFlightSchedule(flightSchedule);
+        producerService.setFlightSchedule(SeatDetails);
     }
 
     @Override
-    public void cancelSeat(int idSeat, long idSchedule, String token) {
+    public void cancelSeat(int idSeat, long idFlight, String token) {
         String email = new JwtTokenProvider().getUserIdFromJWT(token);
         User user = iUserService.getUserByEmail(email);
-        FlightSchedule flightSchedule = flightScheduleService.getFlightById(idSchedule);
-        Set<SeatDetail> SeatDetails = flightSchedule.getSeatDetails();
+        List<SeatDetail> SeatDetails = this.getSeatDetailById(idFlight);
         for (SeatDetail s : SeatDetails) {
-            if ((s.getId().getSeat_id() == idSeat) &&
+            if ((s.getSeat().getId() == idSeat) &&
                     (user.getId() == s.getUserBookingSeat()) &&
                     (s.getStatus() == SeatStatus.BOOKING)) {
                 s.setUserBookingSeat(0);
@@ -63,7 +61,7 @@ public class SeatServiceImpl implements ISeatService {
                 seatDetailRepository.save(s);
             }
         }
-        producerService.setFlightSchedule(flightSchedule);
+        producerService.setFlightSchedule(SeatDetails);
     }
 
     @Override
@@ -71,10 +69,10 @@ public class SeatServiceImpl implements ISeatService {
         return seatRepository.getSeatBySeatCode(seatCode);
     }
 
-    @Override
-    public SeatDetail getSeatDetailById(FlightSeatKey flightSeatKey) {
-        return seatDetailRepository.getReferenceById(flightSeatKey);
-    }
+//    @Override
+//    public SeatDetail getSeatDetailById(FlightSeatKey flightSeatKey) {
+//        return seatDetailRepository.getReferenceById(flightSeatKey);
+//    }
 
     @Override
     public void saveSeatDetail(SeatDetail seatDetail) {
@@ -88,7 +86,22 @@ public class SeatServiceImpl implements ISeatService {
 
     @Override
     @KafkaListener(groupId = "seatG", topics = "seatTopic")
-    public void listenFlightSchedule(FlightSchedule flightSchedule) {
-        simpMessagingTemplate.convertAndSend("/topic/seatTopic", flightSchedule);
+    public void listenFlightSchedule(List<SeatDetail> seatDetails) {
+        simpMessagingTemplate.convertAndSend("/topic/seatTopic", seatDetails);
+    }
+
+    @Override
+    public List<SeatDetail> getSeatDetailByFlightIds(List<Long> flightIds) {
+        return seatDetailRepository.findSeatDetailsByFlightIds(flightIds);
+    }
+
+    @Override
+    public List<SeatDetail> getSeatDetailById(Long flightId) {
+        return seatDetailRepository.findAllByFlightId(flightId);
+    }
+
+    @Override
+    public SeatDetail getSeatDetailBySeatIdAndFlightId(Integer seatId, Long flightId) {
+        return seatDetailRepository.getSeatDetailBySeatIdAndFlightId(seatId, flightId);
     }
 }

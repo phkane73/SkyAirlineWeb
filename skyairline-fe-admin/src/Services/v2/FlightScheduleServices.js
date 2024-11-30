@@ -28,12 +28,3 @@ export const checkApprove = async (id) => {
     console.error("Error fetching data:", error);
   }
 };
-
-export const approveFlightSchedule = async (id) => {
-  try {
-    const response = await API.patch(`/api/flight-schedule/approved/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};

@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { getTicketsByUserId } from "../Services/TicketServices";
-import { useDispatch, useSelector } from "react-redux";
-import dayjs from "dayjs";
-import { removeSession } from "../Redux/reducers/SessionReducer";
 import CircularProgress from "@mui/joy/CircularProgress";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { removeSession } from "../Redux/reducers/SessionReducer";
+import { getTicketsByUserId } from "../Services/TicketServices";
+import { getFlightByIds } from "../Services/v2/FlightServices";
 const TicketPage = () => {
   const [tickets, setTickets] = useState([]);
   const token = useSelector((state) => state.Auth.token);
   const [loading, setLoading] = useState(true);
+  const [flights, setFlights] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
     async function fetchData() {
@@ -18,11 +20,14 @@ const TicketPage = () => {
       );
       if (sortedResult) {
         setLoading(false);
+        setTickets(sortedResult);
+        const idFlights = result.map((item) => item.idFlight);
+        const f = await getFlightByIds(idFlights);
+        setFlights(f);
       }
-      setTickets(sortedResult);
     }
     fetchData();
-  }, [token, dispatch]);
+  }, []);
 
   return (
     <div>
@@ -39,7 +44,10 @@ const TicketPage = () => {
           ) : (
             tickets.map((ticket) => {
               return (
-                <div className="ticket mb-8 w-2/3 mx-auto shadow-xl border-solid border-[#afb2b3] border-2">
+                <div
+                  className="ticket mb-8 w-2/3 mx-auto shadow-xl border-solid border-[#afb2b3] border-2"
+                  key={ticket.id}
+                >
                   <div className="flex">
                     <img
                       src={ticket.qrcode}
@@ -80,53 +88,67 @@ const TicketPage = () => {
                   <h1 className="mx-3 pl-1 text-xl text-white font-bold bg-[#2D7690] leading-9">
                     Flight information
                   </h1>
-                  <div className="bg-[#dbeef5] py-3 mx-3 mb-3 flex justify-between items-center">
-                    <i className="fa-solid fa-circle text-2xl text-white ml-[-10px]"></i>
-                    <div className="flex w-[90%] text-black font-medium">
-                      <div className="w-2/3">
-                        <div className="flex justify-between mb-2">
-                          <div>
-                            <span>Date: </span>
-                            <span>
-                              {dayjs(
-                                ticket.flightSchedule.departureTime
-                              ).format("DD/MM/YYYY")}
-                            </span>
-                          </div>
-                          <h1>Flight Code: XXXXXX(QR code)</h1>
-                        </div>
-                        <div className="flex justify-between items-center ">
-                          <div className="flex flex-col items-center">
-                            <h1 className="text-2xl font-bold">
-                              {ticket.flightSchedule.departureAirport.location}
-                            </h1>
-                            <h1 className="text-xl ">
-                              {dayjs(
-                                ticket.flightSchedule.departureTime
-                              ).format("HH:mm")}
-                            </h1>
-                          </div>
-                          <i class="fa-solid fa-plane"></i>
-                          <div className="flex flex-col items-center ">
-                            <h1 className="text-2xl font-bold">
-                              {ticket.flightSchedule.arrivalAirport.location}
-                            </h1>
-                            <h1 className="text-xl ">
-                              {dayjs(ticket.flightSchedule.arrivalTime).format(
-                                "HH:mm"
-                              )}
-                            </h1>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="w-1/3 ml-2 flex flex-col items-center justify-center">
-                        <h1>{ticket.seat.ticketClass.className}</h1>
-                        <h1>Plane: {ticket.flightSchedule.planeName}</h1>
-                        <h1>Seat Code: {ticket.seat.seatCode}</h1>
-                      </div>
-                    </div>
-                    <i className="fa-solid fa-circle text-2xl text-white mr-[-10px]"></i>
-                  </div>
+                  {flights
+                    ? flights
+                        .filter((item) => item.id === ticket.idFlight)
+                        .map((flight) => {
+                          return (
+                            <div
+                              className="bg-[#dbeef5] py-3 mx-3 mb-3 flex justify-between items-center"
+                              key={flight.id}
+                            >
+                              <i className="fa-solid fa-circle text-2xl text-white ml-[-10px]"></i>
+                              <div className="flex w-[90%] text-black font-medium">
+                                <div className="w-2/3">
+                                  <div className="flex justify-between mb-2">
+                                    <div>
+                                      <span>Date: </span>
+                                      <span>
+                                        {dayjs(flight.departureTime).format(
+                                          "DD/MM/YYYY"
+                                        )}
+                                      </span>
+                                    </div>
+                                    <h1>Flight Code: XXXXXX(QR code)</h1>
+                                  </div>
+                                  <div className="flex justify-between items-center ">
+                                    <div className="flex flex-col items-center">
+                                      <h1 className="text-2xl font-bold">
+                                        {
+                                          flight.departureAirport
+                                            .airportLocation
+                                        }
+                                      </h1>
+                                      <h1 className="text-xl ">
+                                        {dayjs(flight.departureTime).format(
+                                          "HH:mm"
+                                        )}
+                                      </h1>
+                                    </div>
+                                    <i className="fa-solid fa-plane"></i>
+                                    <div className="flex flex-col items-center ">
+                                      <h1 className="text-2xl font-bold">
+                                        {flight.arrivalAirport.airportLocation}
+                                      </h1>
+                                      <h1 className="text-xl ">
+                                        {dayjs(flight.arrivalTime).format(
+                                          "HH:mm"
+                                        )}
+                                      </h1>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="w-1/3 ml-2 flex flex-col items-center justify-center">
+                                  <h1>{ticket.seat.ticketClass.className}</h1>
+                                  <h1>Plane: {flight.plane.planeName}</h1>
+                                  <h1>Seat Code: {ticket.seat.seatCode}</h1>
+                                </div>
+                              </div>
+                              <i className="fa-solid fa-circle text-2xl text-white mr-[-10px]"></i>
+                            </div>
+                          );
+                        })
+                    : ""}
                 </div>
               );
             })

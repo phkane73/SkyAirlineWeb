@@ -1,6 +1,4 @@
 import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import * as React from "react";
 import { Link } from "react-router-dom";
 const Sidebar = () => {
@@ -13,7 +11,7 @@ const Sidebar = () => {
     setAnchorEl(null);
   };
   return (
-    <div className="bg-[#2D7690] max-h-[620px] pt-4 overflow-y-auto custom-scrollbar">
+    <div className="bg-[#2D7690] h-[620px] pt-4">
       <div className="sidebar_body">
         <Button
           style={{
@@ -138,7 +136,7 @@ const Sidebar = () => {
           component={Link}
           to="/flightSchedule"
         >
-          <i className="fa-solid fa-route"></i>
+          <i className="fa-regular fa-calendar-days"></i>
           <h1 className="pl-4">Flight Schedule</h1>
         </Button>
         <Button
@@ -159,7 +157,7 @@ const Sidebar = () => {
           <i className="fa-solid fa-ticket"></i>
           <h1 className="pl-4">Ticket Management</h1>
         </Button>
-        <div>
+        {/* <div>
           <Button
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
@@ -213,7 +211,7 @@ const Sidebar = () => {
               <h1 className="pl-4">Danh sách chuyến bay</h1>
             </MenuItem>
           </Menu>
-        </div>
+        </div> */}
         <Button
           style={{
             color: "white",
@@ -223,14 +221,14 @@ const Sidebar = () => {
             justifyContent: "flex-start",
             fontSize: "18px",
             fontWeight: "bold",
-            padding: "15px 10px 15px 10px",
+            padding: "15px 10px 0px 10px",
           }}
           variant="elevated"
           component={Link}
           to="/revenue"
         >
           <i className="fa-solid fa-chart-line"></i>
-          <h1 className="pl-4">Quản lý thống kê</h1>
+          <h1 className="pl-4">Revenue Management</h1>
         </Button>
       </div>
     </div>

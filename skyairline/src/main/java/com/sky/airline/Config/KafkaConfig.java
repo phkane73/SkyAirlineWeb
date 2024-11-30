@@ -33,11 +33,18 @@ public class KafkaConfig {
                 .partitions(2)
                 .build();
     }
-
     @Bean
     public NewTopic ticketTopic(){
         return TopicBuilder
                 .name("ticketTopic")
+                .partitions(2)
+                .build();
+    }
+
+    @Bean
+    public NewTopic approvedFlightTopic(){
+        return TopicBuilder
+                .name("approvedFlights")
                 .partitions(2)
                 .build();
     }

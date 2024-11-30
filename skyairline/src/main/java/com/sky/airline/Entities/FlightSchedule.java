@@ -27,9 +27,6 @@ public class FlightSchedule implements Serializable {
     @JoinColumn(name = "arrival_airport", referencedColumnName = "airport_id")
     private Airport arrivalAirport;
 
-    @OneToMany(mappedBy = "id.flight_schedule_id")
-    private Set<SeatDetail> seatDetails;
-
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private String planeName;

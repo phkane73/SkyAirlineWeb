@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -38,27 +39,39 @@ public class TicketServiceImpl implements ITicketService {
 
     @Override
     public void createTicket(String paymentMethod, Float ticketPrice, Integer seatId,
-                             Long flightScheduleId, Integer userId, String paymentId) throws IOException, WriterException {
-        FlightSchedule flightSchedule = flightScheduleService.getFlightById(flightScheduleId);
+                             Long flightId, Integer userId, String paymentId) throws IOException, WriterException {
         User user = userService.getUserById(userId);
         Seat seat = seatService.getSeatById(seatId);
         Ticket ticket = new Ticket();
         ticket.setPayMethod(paymentMethod);
         ticket.setSeat(seat);
         ticket.setTicketPrice(ticketPrice);
-        ticket.setFlightSchedule(flightSchedule);
         ticket.setPaymentId(paymentId);
+        ticket.setIdFlight(flightId);
         ticket.setPayDate(java.time.LocalDateTime.now());
         ticket.setUser(user);
         ticket.setCheckRevenue(false);
-        String qrcode = qrCodeToCloudinary.createQRCodeToCloudinary(flightSchedule.getFlightCode());
+        String ticketCode = generateRandomString();
+        String qrcode = qrCodeToCloudinary.createQRCodeToCloudinary(ticketCode);
         ticket.setQRCode(qrcode);
         producerService.setTicket(ticket);
         ticketRepository.save(ticket);
-        FlightSeatKey flightSeatKey = new FlightSeatKey(seat.getId(), flightScheduleId);
-        SeatDetail seatDetail = seatService.getSeatDetailById(flightSeatKey);
+        SeatDetail seatDetail =seatService.getSeatDetailBySeatIdAndFlightId(seatId, flightId);
         seatDetail.setStatus(SeatStatus.BOOKED);
         seatService.saveSeatDetail(seatDetail);
+    }
+
+    public String generateRandomString() {
+        int length = 7;
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            result.append(characters.charAt(index));
+        }
+        return result.toString();
     }
 
     @Override

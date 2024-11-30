@@ -10,10 +10,10 @@ import {
   YAxis,
 } from "recharts";
 import { revenueMonths } from "../Services/RevenueService";
-import { flightCount } from "../Services/ScheduleServices";
 import { ticketCount } from "../Services/TicketServices";
 import { userCount } from "../Services/UserServices";
 import { getAllAirport } from "../Services/v2/AirportServices";
+import { getAllFlightScheduleWithPaginate } from "../Services/v2/FlightScheduleServices";
 
 const Overview = () => {
   const [countTicket, setCountTicket] = useState(0);
@@ -28,10 +28,16 @@ const Overview = () => {
       setCountTicket(ticket);
       const user = await userCount();
       setCountUser(user);
-      const flight = await flightCount();
-      setCountFlight(flight);
+      const flight = await getAllFlightScheduleWithPaginate({
+        page: 1,
+        limit: 20,
+      });
+      setCountFlight(flight.total);
       const airport = await getAllAirport();
-      setCountAirport(airport.length);
+      const airportOperating = airport.filter(
+        (item) => item.isOperating === true
+      );
+      setCountAirport(airportOperating.length);
       const result = await revenueMonths();
       setRevenue(result);
     }
@@ -47,9 +53,9 @@ const Overview = () => {
             className="w-1/4 h-[150px] rounded-md shadow-sm shadow-red-500 flex items-center justify-between p-5"
           >
             <div className="flex flex-col gap-2">
-              <span className="text-sm uppercase">Tổng số vé</span>
-              <span className="text-2xl font-bold">{countTicket} vé</span>
-              <span className="underline">Xem chi tiết</span>
+              <span className="text-sm uppercase">Total Flight Ticket</span>
+              <span className="text-2xl font-bold">{countTicket} ticket</span>
+              <span className="underline">View details</span>
             </div>
             <div className="bg-red-500 w-[70px] h-[70px] rounded-full flex justify-center items-center">
               <i className="fa-solid fa-ticket text-4xl text-white"></i>
@@ -60,22 +66,24 @@ const Overview = () => {
             className="w-1/4 h-[150px] rounded-md shadow-sm shadow-green-500 flex items-center justify-between p-5"
           >
             <div className="flex flex-col gap-2">
-              <span className="text-sm uppercase">Số người dùng</span>
+              <span className="text-sm uppercase">Total User</span>
               <span className="text-2xl font-bold">{countUser} account</span>
-              <span className="underline">Xem chi tiết</span>
+              <span className="underline">View details</span>
             </div>
             <div className="bg-green-500 w-[70px] h-[70px] rounded-full flex justify-center items-center">
               <i className="fa-solid fa-user text-4xl text-white"></i>
             </div>
           </Link>
           <Link
-            to="/schedule/list"
+            to="/flightSchedule"
             className="w-1/4 h-[150px] rounded-md shadow-sm shadow-blue-500 flex items-center justify-between p-5"
           >
             <div className="flex flex-col gap-2">
-              <span className="text-sm uppercase">Số chuyến bay</span>
-              <span className="text-2xl font-bold">{countFlight} flight</span>
-              <span className="underline">Xem chi tiết</span>
+              <span className="text-sm uppercase">Toltal F.Schedule</span>
+              <span className="text-2xl font-bold">
+                {countFlight} f.schedule
+              </span>
+              <span className="underline">View details</span>
             </div>
             <div className="bg-blue-500 w-[70px] h-[70px] rounded-full flex justify-center items-center">
               <i className="fa-solid fa-plane-departure text-4xl text-white"></i>
@@ -86,9 +94,9 @@ const Overview = () => {
             className="w-1/4 h-[150px] rounded-md shadow-sm shadow-yellow-500 flex items-center justify-between p-5"
           >
             <div className="flex flex-col gap-2">
-              <span className="text-sm uppercase">Số sân bay</span>
-              <span className="text-2xl font-bold">{countAirport} sân bay</span>
-              <span className="underline">Xem chi tiết</span>
+              <span className="text-sm uppercase">Total Airport</span>
+              <span className="text-2xl font-bold">{countAirport} airport</span>
+              <span className="underline">View details</span>
             </div>
             <div className="bg-yellow-500 w-[70px] h-[70px] rounded-full flex justify-center items-center">
               <i className="fa-solid fa-inbox text-4xl text-white"></i>

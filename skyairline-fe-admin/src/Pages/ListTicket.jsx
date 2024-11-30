@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { getTickets } from "../Services/TicketServices";
 import dayjs from "dayjs";
-import CircularProgress from "@mui/material/CircularProgress";
+import React, { useEffect, useState } from "react";
 import Search from "../Components/Search";
+import { getTickets } from "../Services/TicketServices";
+import { getFlightByIds } from "../Services/v2/FlightServices";
 
 const ListTicket = () => {
   const [tickets, setTickets] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [flights, setFlights] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -23,22 +25,19 @@ const ListTicket = () => {
         setLoading(false);
         setData(result);
         setTickets(result);
+        const idFlights = result.map((item) => item.idFlight);
+        const f = await getFlightByIds(idFlights);
+        setFlights(f);
       }
     }
     fetchData();
   }, []);
 
-  console.log(data);
-
   const handleSearch = (query) => {
     const filteredDate =
       query !== ""
-        ? tickets.filter(
-            (item) =>
-              item.paymentId.toLowerCase().includes(query.toLowerCase()) ||
-              item.flightSchedule.flightCode
-                .toLowerCase()
-                .includes(query.toLowerCase())
+        ? tickets.filter((item) =>
+            item.paymentId.toLowerCase().includes(query.toLowerCase())
           )
         : data;
     setTickets(filteredDate);
@@ -46,9 +45,9 @@ const ListTicket = () => {
 
   return (
     <div className="px-10 py-3">
-      <h1 className="text-center text-3xl font-bold">DANH SÁCH VÉ</h1>
+      <h1 className="text-center text-3xl font-bold uppercase">List Ticket</h1>
       <div className="flex justify-between items-center">
-        <Search onSearch={handleSearch} />
+        <Search onSearch={handleSearch} text="Enter payment id by search" />
       </div>
       {loading ? (
         <CircularProgress sx={{ marginLeft: 60, marginTop: 20 }} />
@@ -73,7 +72,7 @@ const ListTicket = () => {
                       fontSize: "18px",
                     }}
                   >
-                    Ngày đặt
+                    Booking date
                   </TableCell>
                   <TableCell
                     style={{
@@ -83,7 +82,7 @@ const ListTicket = () => {
                       fontSize: "18px",
                     }}
                   >
-                    Mã thanh toán
+                    Payment Id
                   </TableCell>
                   <TableCell
                     style={{
@@ -93,7 +92,7 @@ const ListTicket = () => {
                       fontSize: "18px",
                     }}
                   >
-                    Người đặt vé
+                    Ticket booker
                   </TableCell>
                   <TableCell
                     style={{
@@ -103,7 +102,7 @@ const ListTicket = () => {
                       fontSize: "18px",
                     }}
                   >
-                    Mã chuyến bay
+                    Flight Code
                   </TableCell>
                   <TableCell
                     style={{
@@ -113,7 +112,7 @@ const ListTicket = () => {
                       fontSize: "18px",
                     }}
                   >
-                    Mã ghế
+                    Seat Code
                   </TableCell>
                   <TableCell
                     style={{
@@ -123,7 +122,7 @@ const ListTicket = () => {
                       fontSize: "18px",
                     }}
                   >
-                    Giá vé
+                    Ticket Price
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -141,7 +140,11 @@ const ListTicket = () => {
                         {t.user.username}
                       </TableCell>
                       <TableCell style={{ fontSize: "16px" }}>
-                        {t.flightSchedule.flightCode}
+                        {flights
+                          .filter((item) => item.id === t.idFlight)
+                          .map((flight) => {
+                            return flight.flightCode;
+                          })}
                       </TableCell>
                       <TableCell style={{ fontSize: "16px" }}>
                         {t.seat.seatCode}

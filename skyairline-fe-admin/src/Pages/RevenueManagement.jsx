@@ -1,22 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
   Rectangle,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
 } from "recharts";
 
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Tab from "@mui/material/Tab";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import Tabs from "@mui/material/Tabs";
+import PropTypes from "prop-types";
 import Search from "../Components/Search";
 import {
   countRevenue,
@@ -24,10 +28,6 @@ import {
   revenueYears,
   revenues,
 } from "../Services/RevenueService";
-import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -99,13 +99,13 @@ const RevenueManagement = () => {
 
   return (
     <div>
-      <div className="px-10 py-3">
-        <h1 className="text-center text-3xl font-bold mb-5">
-          QUẢN LÝ DOANH SỐ
+      <div className="px-10">
+        <h1 className="text-center text-3xl font-bold my-3">
+            REVENUE MANAGEMENT
         </h1>
         <div className="flex">
           <div className="flex justify-between items-center"></div>
-          <div className="w-1/4">
+          <div className="w-1/4 mr-10">
             <Search onSearch={handleSearch} />
             <TableContainer
               component={Paper}
@@ -126,7 +126,7 @@ const RevenueManagement = () => {
                         fontSize: "18px",
                       }}
                     >
-                      Thời điểm
+                      Date
                     </TableCell>
                     <TableCell
                       style={{
@@ -136,7 +136,7 @@ const RevenueManagement = () => {
                         fontSize: "18px",
                       }}
                     >
-                      Doanh số
+                      Revenue
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -158,7 +158,7 @@ const RevenueManagement = () => {
             </TableContainer>
             {/* <h4 className="mt-2">Total: {listPlane.length}</h4> */}
           </div>
-          <div className="w-3/4 h-[540px] ml-3">
+          <div className="w-3/4 h-[540px]">
             <Box sx={{ width: "100%" }}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <Tabs
@@ -166,13 +166,13 @@ const RevenueManagement = () => {
                   onChange={handleChange}
                   aria-label="basic tabs example"
                 >
-                  <Tab label="Doanh số theo tháng" {...a11yProps(0)} />
-                  <Tab label="Doanh số theo năm" {...a11yProps(1)} />
+                  <Tab label="Months" {...a11yProps(0)} />
+                  <Tab label="Years" {...a11yProps(1)} />
                 </Tabs>
               </Box>
               <CustomTabPanel value={value} index={0}>
                 <BarChart
-                  width={870}
+                  width={850}
                   height={460}
                   data={revenueMonth}
                   margin={{
@@ -188,7 +188,7 @@ const RevenueManagement = () => {
                   <Bar
                     barSize={30}
                     dataKey="totalRevenue"
-                    name="Tổng tiền"
+                    name="Total Price"
                     fill="#8884d8"
                     activeBar={<Rectangle fill="pink" stroke="blue" />}
                   />

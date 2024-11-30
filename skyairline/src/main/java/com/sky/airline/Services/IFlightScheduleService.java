@@ -1,6 +1,7 @@
 package com.sky.airline.Services;
 
 import com.sky.airline.Dto.AirportDTO;
+import com.sky.airline.Dto.FlightDTO;
 import com.sky.airline.Dto.PlaneDTO;
 import com.sky.airline.Entities.*;
 
@@ -41,5 +42,7 @@ public interface IFlightScheduleService {
     boolean isDateOfFlightSchedule( LocalDateTime start);
 
     long countFlightSchedule();
+
+    void comsume(FlightDTO flightDTOs);
 
 }

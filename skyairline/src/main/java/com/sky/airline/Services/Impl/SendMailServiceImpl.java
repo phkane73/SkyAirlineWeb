@@ -72,15 +72,10 @@ public class SendMailServiceImpl implements ISendMailService {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
         Context context = new Context();
-        context.setVariable("date", "Date: " + ticket.getFlightSchedule().getDepartureTime().format(CUSTOM_FORMATTER_Date));
+
         context.setVariable("class","Class: " + ticket.getSeat().getTicketClass().getClassName());
-        context.setVariable("plane","Plane: " + ticket.getFlightSchedule().getPlaneName());
         context.setVariable("seatCode","Seat Code: " + ticket.getSeat().getSeatCode());
         context.setVariable("name", ticket.getUser().getUsername());
-        context.setVariable("departure", ticket.getFlightSchedule().getDepartureAirport().getLocation());
-        context.setVariable("arrival", ticket.getFlightSchedule().getArrivalAirport().getLocation());
-        context.setVariable("departureTime", ticket.getFlightSchedule().getDepartureTime().format(CUSTOM_FORMATTER_Hour));
-        context.setVariable("arrivalTime", ticket.getFlightSchedule().getArrivalTime().format(CUSTOM_FORMATTER_Hour));
         context.setVariable("qRCode", ticket.getQRCode());
         String html = templateEngine.process("Ticket", context);
         helper.setTo(ticket.getUser().getEmail());

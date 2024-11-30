@@ -1,6 +1,7 @@
 package com.sky.airline.Services.Impl;
 
 import com.sky.airline.Dto.AirportDTO;
+import com.sky.airline.Dto.FlightDTO;
 import com.sky.airline.Dto.FlightScheduleDTO;
 import com.sky.airline.Dto.PlaneDTO;
 import com.sky.airline.Entities.*;
@@ -11,6 +12,7 @@ import com.sky.airline.Repositories.ISeatRepository;
 import com.sky.airline.Services.IFlightScheduleService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -139,9 +141,8 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         long count = seatRepository.count();
         for (int i=0; i<count; i++){
             SeatDetail seatDetail = new SeatDetail();
-            FlightSeatKey flightSeatKey = new FlightSeatKey(seats.get(i).getId(),idSchedule);
             seatDetail.setStatus(SeatStatus.AVAILABLE);
-            seatDetail.setId(flightSeatKey);
+            seatDetail.setFlightId(idSchedule);
             seatDetail.setSeat(seats.get(i));
             seatDetailRepository.save(seatDetail);
         }
@@ -167,6 +168,11 @@ public class FlightScheduleServiceImpl implements IFlightScheduleService {
         return flightScheduleRepository.count();
     }
 
+    @Override
+    @KafkaListener(topics = "approvedFlights", groupId = "approvedF")
+    public void comsume(FlightDTO flightDTOs) {
+        createSeatWithFlightSchedule(flightDTOs.getFlightId());
+    }
 
     @Override
     public List<FlightSchedule> handleFlightSchedule(List<FlightTime> flightTimeList, String start, String end, int action) {

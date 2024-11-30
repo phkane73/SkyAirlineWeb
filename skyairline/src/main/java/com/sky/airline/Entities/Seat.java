@@ -26,7 +26,7 @@ public class Seat implements Serializable {
     @JoinColumn(name = "ticket_class_id")
     private TicketClass ticketClass;
 
-    @OneToMany(mappedBy = "id.seat_id")
+    @OneToMany(mappedBy = "seat")
     @JsonIgnore
     private Set<SeatDetail> seatDetails;
 
